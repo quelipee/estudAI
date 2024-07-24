@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Domains\UserDomain\UserDTO;
-use App\Domains\UserDomain\UserRequest\UserRequest;
+use App\Domains\UserDomain\UserRequest\UserSignUpRequest;
 use App\Domains\UserDomain\UserRequest\UserSignInRequest;
 
 readonly class SignUpDTO{
@@ -13,7 +13,7 @@ readonly class SignUpDTO{
     )
     { }
 
-    public static function fromValidatedRequest(UserRequest $request): SignUpDTO
+    public static function fromValidatedRequest(UserSignUpRequest $request): SignUpDTO
     {
         return new self(
             name: $request->validated('name'),

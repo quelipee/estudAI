@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domains\UserDomain\UserRequest;
+namespace App\Domains\CourseDomain\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserRequest extends FormRequest
+class CourseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,9 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'exists:users,id'],
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email'],
-            'email_verified_at' => ['nullable', 'date'],
+            'title' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'category' => ['required', 'string'],
         ];
     }
 }

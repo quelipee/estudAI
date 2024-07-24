@@ -2,7 +2,7 @@
 
 namespace App\Domains\UserDomain\UserDTO;
 
-use App\Domains\UserDomain\UserRequest\UserRequest;
+use App\Domains\UserDomain\UserRequest\UserSignUpRequest;
 use App\Domains\UserDomain\UserRequest\UserSignInRequest;
 
 readonly class SignInDTO

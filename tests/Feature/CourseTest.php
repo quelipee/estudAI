@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class CourseTest extends TestCase
@@ -20,6 +21,19 @@ class CourseTest extends TestCase
 
     public function test_create_course()
     {
+        $payload = [
+            'title' => 'curso de python basico',
+            'description' => 'neste curso de python basico você irá aprender do zero tudo sobre a ferramenta de desenvolvimento.',
+            'category' => 'desenvolvedor',
+        ];
 
+        $response = $this->post('api/newCourses', $payload);
+        $response->assertStatus(Response::HTTP_CREATED);
+    }
+
+    public function test_connectAPI()
+    {
+        $response = $this->get('api/requestChat');
+        $response->assertStatus(Response::HTTP_OK);
     }
 }

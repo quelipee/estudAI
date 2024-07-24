@@ -4,6 +4,8 @@ namespace App\Domains\UserDomain\UserService;
 
 use App\Domains\UserDomain\UserDTO\SignInDTO;
 use App\Domains\UserDomain\UserDTO\SignUpDTO;
+use App\Domains\UserDomain\UserDTO\UserDTO;
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -59,5 +61,21 @@ class UserService
             'email' => $user->email,
             'token' => $token
         ];
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    public function newJoinCourse(Course $course, UserDTO $dto) : User
+    {
+        $user = User::find($dto->id);
+        if (!$user){
+            throw new \Exception('User not found');
+        }elseif (!$course){
+            throw new \Exception('Course not found');
+        }
+        $user->courses()->attach($course->id);
+        return $user->load('courses');
     }
 }

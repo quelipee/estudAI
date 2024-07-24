@@ -5,7 +5,7 @@ namespace App\Domains\UserDomain\UserRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserRequest extends FormRequest
+class UserSignUpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,10 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'exists:users,id'],
             'name' => ['required', 'string'],
-            'email' => ['required', 'email'],
-            'email_verified_at' => ['nullable', 'date'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => 'required|min:5',
+            'password_confirmation' => 'required|same:password',
         ];
     }
 }

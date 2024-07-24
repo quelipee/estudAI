@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         $this->attributes['password'] = Hash::make($password);
     }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class,'courses_users')->withPivot('course_id')->withTimestamps();
+    }
 }

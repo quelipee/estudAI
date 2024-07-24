@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Course;
 use App\Models\User;
 use Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,7 +23,7 @@ class UserTest extends TestCase
     {
         $payload = [
             'name' => 'felipe',
-            'email' => 'felipe@felip.com',
+            'email' =>  fake()->email(),
             'password' => '123456',
             'password_confirmation' => '123456'
         ];
@@ -48,6 +49,20 @@ class UserTest extends TestCase
         $response = $this->post('api/login', $payload);
 
         $response->assertStatus(Response::HTTP_OK);
+    }
+
+    public function test_user_can_join_course()
+    {
+
+        $user = User::factory()->create();
+        $course = Course::create([
+            'title' => fake()->title,
+            'description' => fake()->text(20),
+            'category' => 'programação'
+        ]);
+
+        $response = $this->actingAs($user)->post('api/join-course/'.$course->id, $user->toArray());
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     public function test_middleware_in_signIn()
