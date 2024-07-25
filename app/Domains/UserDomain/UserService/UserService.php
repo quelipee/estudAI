@@ -7,9 +7,12 @@ use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
 use App\Models\Course;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
+use mysql_xdevapi\Exception;
 
 class UserService
 {
@@ -77,5 +80,24 @@ class UserService
         }
         $user->courses()->attach($course->id);
         return $user->load('courses');
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function serviceSignOut(): bool
+    {
+        if (!Auth::check()){
+            throw new \Exception('Not authenticated');
+        }
+
+        $user = Auth::user();
+        try {
+            $user->tokens()->delete();;
+            return true;
+        }catch (\Exception $exception){
+            Log::error('Error revoking tokens for user ' . $user->id . ': ' . $exception->getMessage());
+            throw new Exception('Failed to log out user', $exception);
+        }
     }
 }

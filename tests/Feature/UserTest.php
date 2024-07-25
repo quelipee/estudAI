@@ -51,6 +51,14 @@ class UserTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
     }
 
+    public function test_user_can_signOut()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('api/logout');
+        $response->assertStatus(Response::HTTP_OK);
+    }
+
     public function test_user_can_join_course()
     {
 

@@ -16,6 +16,7 @@ Route::middleware(['guest:sanctum'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('logout', [UserController::class,'signOut'])->name('signOut');
    Route::post('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course');
 });
 

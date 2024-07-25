@@ -15,6 +15,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -46,6 +47,19 @@ class UserController extends Controller
         return response()->json([
             'message' => 'User login successfully',
             'user' => $auth,
+        ],
+        200);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function signOut() : void
+    {
+        $logout = $this->userService->serviceSignOut();
+        response()->json([
+            'logout' => $logout,
+            'message' => 'User logged out successfully',
         ],
         200);
     }
