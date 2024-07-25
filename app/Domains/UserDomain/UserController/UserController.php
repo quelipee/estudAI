@@ -54,10 +54,14 @@ class UserController extends Controller
     /**
      * @throws Exception
      */
-    public function signOut() : void
+    public function signOut(): JsonResponse
     {
         $logout = $this->userService->serviceSignOut();
-        response()->json([
+        if($logout === false){
+            throw new Exception('Unable to sign out');
+        };
+
+        return response()->json([
             'logout' => $logout,
             'message' => 'User logged out successfully',
         ],
@@ -67,7 +71,7 @@ class UserController extends Controller
     /**
      * @throws Exception
      */
-    public function joinCourse(Course $course, UserRequest $request)
+    public function joinCourse(Course $course, UserRequest $request): JsonResponse
     {
         $user_courses = $this->userService->
         newJoinCourse($course, UserDTO::fromValidatedRequest($request));

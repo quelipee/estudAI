@@ -15,9 +15,11 @@ Route::middleware(['guest:sanctum'])->group(function () {
     Route::post('login', [UserController::class,'signIn'])->name('signIn');
 });
 
+Route::get('courses',[CourseController::class,'courses'])->name('courses');
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [UserController::class,'signOut'])->name('signOut');
-   Route::post('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course');
+    Route::post('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course');
 });
 
 Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');

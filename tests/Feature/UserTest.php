@@ -73,6 +73,14 @@ class UserTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED);
     }
 
+    public function test_user_can_view_courses()
+    {
+        $user = User::factory()->create();
+        Course::factory(10)->create();
+        $response = $this->actingAs($user)->get('/api/courses');
+        $response->assertStatus(Response::HTTP_OK);
+    }
+
     public function test_middleware_in_signIn()
     {
         $user = User::factory()->create(['password' => Hash::make('123456')]);

@@ -4,6 +4,7 @@ namespace App\Domains\CourseDomain\CourseService;
 
 use App\Domains\CourseDomain\CourseDTO\newCourseDTO;
 use App\Models\Course;
+use Illuminate\Support\Collection;
 
 class CourseService
 {
@@ -32,5 +33,21 @@ class CourseService
     public function existCourse($title) : bool
     {
         return $this->course::where('title',$title)->exists();
+    }
+
+    public function getAllCourses(): Collection
+    {
+        $courses = Course::all()->map(function (Course $course){
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'description' => $course->description,
+                'category' => $course->category,
+                'created_at' => $course->created_at,
+                'created_up' => $course->created_up,
+            ];
+        });
+
+        return collect($courses);
     }
 }
