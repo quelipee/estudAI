@@ -23,5 +23,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');
-Route::get('requestChat',[RequestsAPI::class,'requestChat'])->name('requestChat');
+Route::get('requestChat/{course}',[RequestsAPI::class,'requestChat'])->name('requestChat');
 

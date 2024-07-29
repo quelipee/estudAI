@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Course;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -9,7 +10,7 @@ use Tests\TestCase;
 
 class CourseTest extends TestCase
 {
-//    use RefreshDatabase;
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      */
@@ -34,7 +35,9 @@ class CourseTest extends TestCase
 
     public function test_connectAPI()
     {
-        $response = $this->get('api/requestChat');
+        Course::factory(10)->create();
+        $course = Course::find(1);
+        $response = $this->get('api/requestChat/' . $course->id);
         $response->assertStatus(Response::HTTP_OK);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Domains\CourseDomain\API;
 
+use App\Models\Course;
 use GeminiAPI\Resources\Parts\TextPart;
+use Illuminate\Http\JsonResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use GeminiAPI\Resources\Content;
 use GeminiAPI\Enums\Role;
@@ -10,23 +12,21 @@ class RequestsAPI
 {
     public function __construct(
         public \GeminiAPI\Client $cliente,
+        public Course $course
     ){}
 
     /**
      * @throws ClientExceptionInterface
      */
-    public function requestChat()
+    public function requestChat(Course $course): JsonResponse
     {
-// Definindo o histórico
+    // Definindo o histórico
         $history = [
             Content::text('Bom dia', Role::User),
             Content::text(
                 <<<TEXT
-                <?php
-                echo "Hello World!";
-                ?>
-
-                This code will print "Bom Dia!" to the standard output.
+                Bom Dia!!! o que gostaria de aprender hoje?
+                `{$course->title}`
                 TEXT,
                 Role::Model,
             ),
@@ -36,7 +36,7 @@ class RequestsAPI
             ->startChat()
             ->withHistory($history);
 
-        $response = $chat->sendMessage(new TextPart('voce pode me ensinar python?'));
+        $response = $chat->sendMessage(new TextPart(''));
         print_r($response->text());
 
         return response()->json([
@@ -44,13 +44,14 @@ class RequestsAPI
             'request' => $response->text(),
         ]);
     }
+
+    public function getTitleCourse(): array
+    {
+        $course = $this->course->all();
+        $titles = [];
+        foreach ($course as $item){
+            $titles[] = $item->title;
+        }
+        return $titles;
+    }
 }
-
-/*$client = new Client('GEMINI_API_KEY');
-$chat = $client->geminiPro()->startChat();
-
-$response = $chat->sendMessage(new TextPart('Hello World in PHP'));
-print $response->text();
-
-$response = $chat->sendMessage(new TextPart('in Go'));
-print $response->text();*/
