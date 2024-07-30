@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -73,7 +74,7 @@ class UserTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED);
     }
 
-    public function test_user_can_view_courses()
+    public function test_view_courses()
     {
         $user = User::factory()->create();
         Course::factory(10)->create();
@@ -89,6 +90,16 @@ class UserTest extends TestCase
             'email' => 'felipe@felip.com',
             'password' => '123456',
         ]);
+        $response->assertStatus(Response::HTTP_FOUND);
+    }
+
+    public function test_user_no_Register_course_join()
+    {
+        Artisan::call('migrate:fresh --seed');
+        $user = User::find(1);
+        $course = Course::find(1);
+        $user->courses()->attach($course->id);
+        $response = $this->actingAs($user)->post('api/join-course/' . 2);
         $response->assertStatus(Response::HTTP_FOUND);
     }
 }

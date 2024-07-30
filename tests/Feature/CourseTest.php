@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Course;
+use App\Models\User;
+use Database\Seeders\CourseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CourseTest extends TestCase
@@ -35,9 +38,11 @@ class CourseTest extends TestCase
 
     public function test_connectAPI()
     {
-        Course::factory(10)->create();
+        Artisan::call('migrate:fresh --seed');
+        $user = User::find(1);
         $course = Course::find(1);
-        $response = $this->get('api/requestChat/' . $course->id);
+        $user->courses()->attach($course->id);
+        $response = $this->actingAs($user)->get('api/requestChat/' . $course->id);
         $response->assertStatus(Response::HTTP_OK);
     }
 }

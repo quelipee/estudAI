@@ -27,7 +27,12 @@ class CourseSeeder extends Seeder
                 'title' => 'Redes de Computadores',
                 'category' => 'Infraestrutura de Tecnologia da Informação',
                 'description' => 'Entenda como os computadores se conectam e compartilham informações. Neste curso, você vai aprender sobre os diferentes tipos de redes, como a internet funciona, como configurar roteadores e muito mais. É uma ótima opção para quem quer entender melhor como a tecnologia funciona e como se conectar à internet de forma segura e eficiente.'
-            ]
+            ],
+            [
+                'title' => 'python para iniciantes',
+                'category' => 'Desenvolvimento de Software',
+                'description' => 'Aprenda os fundamentos da linguagem Python de forma simples e prática. Ideal para quem está começando na programação.'
+            ],
         ];
 
         foreach ($courses as $data){

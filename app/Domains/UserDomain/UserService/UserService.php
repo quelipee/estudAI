@@ -7,11 +7,8 @@ use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
 use App\Models\Course;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use JetBrains\PhpStorm\NoReturn;
 use mysql_xdevapi\Exception;
 
 class UserService

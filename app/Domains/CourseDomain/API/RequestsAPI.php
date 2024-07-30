@@ -5,6 +5,7 @@ namespace App\Domains\CourseDomain\API;
 use App\Models\Course;
 use GeminiAPI\Resources\Parts\TextPart;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Psr\Http\Client\ClientExceptionInterface;
 use GeminiAPI\Resources\Content;
 use GeminiAPI\Enums\Role;
@@ -43,15 +44,5 @@ class RequestsAPI
             'message' => 'request to chat ok',
             'request' => $response->text(),
         ]);
-    }
-
-    public function getTitleCourse(): array
-    {
-        $course = $this->course->all();
-        $titles = [];
-        foreach ($course as $item){
-            $titles[] = $item->title;
-        }
-        return $titles;
     }
 }
