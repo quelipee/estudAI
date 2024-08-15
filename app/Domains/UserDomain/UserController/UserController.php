@@ -11,11 +11,8 @@ use App\Domains\UserDomain\UserRequest\UserSignInRequest;
 use App\Domains\UserDomain\UserService\UserService;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -76,6 +73,7 @@ class UserController extends Controller
         $user_courses = $this->userService->
         newJoinCourse($course, UserDTO::fromValidatedRequest($request));
 
+        print_r($user_courses->toArray());
         return response()->json([
             'message' => 'Course joined successfully',
             'course' => $user_courses,

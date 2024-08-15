@@ -4,6 +4,7 @@ namespace App\Domains\CourseDomain\CourseService;
 
 use App\Domains\CourseDomain\CourseDTO\newCourseDTO;
 use App\Models\Course;
+use Exception;
 use Illuminate\Support\Collection;
 
 class CourseService
@@ -14,12 +15,12 @@ class CourseService
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function addCourse(newCourseDTO $dto) : Course
     {
         if ($this->existCourse($dto->title) === true ){
-            throw new \Exception('Course already exist');
+            throw new Exception('Course already exist');
         }
 
         return new $this->course([

@@ -23,11 +23,10 @@ class RequestsAPI
     {
     // Definindo o histórico
         $history = [
-            Content::text('Bom dia', Role::User),
+            Content::text('Bom dia, nao responda as minhas perguntas que não forem relacionadas a' . $course->title, Role::User),
             Content::text(
                 <<<TEXT
-                Bom Dia!!! o que gostaria de aprender hoje?
-                `{$course->title}`
+                Bom Dia!!! Vou te ensinar mais sobre `{$course->title}` oque gostaria de aprender?
                 TEXT,
                 Role::Model,
             ),
@@ -39,7 +38,6 @@ class RequestsAPI
 
         $response = $chat->sendMessage(new TextPart(''));
         print_r($response->text());
-
         return response()->json([
             'message' => 'request to chat ok',
             'request' => $response->text(),
