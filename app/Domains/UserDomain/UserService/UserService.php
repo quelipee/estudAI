@@ -72,7 +72,8 @@ class UserService
         $user = User::find($dto->id);
         if (!$user){
             throw new \Exception('User not found');
-        }elseif (!$course){
+        }
+        if (!$course){
             throw new \Exception('Course not found');
         }
         $user->courses()->attach($course->id);
