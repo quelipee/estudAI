@@ -64,3 +64,6 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+[//]: # (pluck volta pega um dado especifico e votla uma colecion so com ela)
+[//]: # (forceDelete para forçar uma remoção da tabela, assim nao adcionando na tabela softdelete)

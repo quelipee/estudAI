@@ -53,7 +53,7 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('api/logout');
+        $response = $this->actingAs($user)->post('api/app/logout');
         $response->assertStatus(Response::HTTP_OK);
     }
 
@@ -67,7 +67,7 @@ class UserTest extends TestCase
             'category' => 'programação'
         ]);
 
-        $response = $this->actingAs($user)->post('api/join-course/'.$course->id, $user->toArray());
+        $response = $this->actingAs($user)->post('api/app/join-course/'.$course->id, $user->toArray());
         $response->assertStatus(Response::HTTP_CREATED);
     }
 
@@ -96,7 +96,7 @@ class UserTest extends TestCase
         $user = User::find(1);
         $course = Course::find(1);
         $user->courses()->attach($course->id);
-        $response = $this->actingAs($user)->post('api/join-course/' . 2);
+        $response = $this->actingAs($user)->post('api/app/join-course/' . 2);
         $response->assertStatus(Response::HTTP_FOUND);
     }
 }
