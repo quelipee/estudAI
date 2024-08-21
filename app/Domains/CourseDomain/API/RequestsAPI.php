@@ -2,14 +2,15 @@
 
 namespace App\Domains\CourseDomain\API;
 
+use App\Domains\CourseDomain\Interfaces\IChatIA;
 use App\Models\Course;
+use GeminiAPI\Enums\Role;
+use GeminiAPI\Resources\Content;
 use GeminiAPI\Resources\Parts\TextPart;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Psr\Http\Client\ClientExceptionInterface;
-use GeminiAPI\Resources\Content;
-use GeminiAPI\Enums\Role;
-class RequestsAPI
+
+class RequestsAPI implements IChatIA
 {
     public function __construct(
         public \GeminiAPI\Client $cliente,

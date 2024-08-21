@@ -80,4 +80,16 @@ class UserController extends Controller
         ],
         201);
     }
+
+    /**
+     * @throws Exception
+     */
+    public function leaveCourse(Course $course, UserRequest $request): JsonResponse
+    {
+        $leave = $this->userService->deleteUserCourse($course, UserDTO::fromValidatedRequest($request));
+        return response()->json([
+            'message' => 'Course leaved successfully',
+            'status' => $leave
+        ],201);
+    }
 }

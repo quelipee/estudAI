@@ -83,6 +83,24 @@ class UserService
     /**
      * @throws \Exception
      */
+    public function deleteUserCourse(Course $course, UserDTO $dto) : bool
+    {
+        $user = User::find($dto->id);
+        if (!$user){
+            throw new \Exception('User not found');
+        }
+
+        if (!$course->id){
+            throw new \Exception('Course not found');
+        }
+
+        $user->courses()->detach($course);
+        return true;
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function serviceSignOut(): bool
     {
         if (!Auth::check()){
