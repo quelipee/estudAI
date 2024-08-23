@@ -5,6 +5,7 @@ namespace App\Domains\UserDomain\UserService;
 use App\Domains\UserDomain\UserDTO\SignInDTO;
 use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
+use App\Domains\UserDomain\UserException\UserException;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,9 @@ use mysql_xdevapi\Exception;
 
 class UserService
 {
-    public function __construct(protected User $user){}
+    public function __construct(
+        protected User $user
+    ){}
 
 
     /**
@@ -22,7 +25,7 @@ class UserService
     public function serviceSignUp(SignUpDTO $dto): User
     {
         if ($this->CheckExistsEmail($dto->email) === true){
-            throw new \Exception('email already exists');
+            throw UserException::emailAlreadyExists();
         };
 
         return New User([
@@ -48,7 +51,7 @@ class UserService
     public function serviceSignIn(SignInDTO $dto): array
     {
         if (!Auth::attempt(['email' => $dto->email, 'password' => $dto->password])) {
-            throw new \Exception('Invalid email or password');
+            throw UserException::invalidCredentials();
         }
 
         $user = Auth::user();
@@ -71,10 +74,11 @@ class UserService
     {
         $user = User::find($dto->id);
         if (!$user){
-            throw new \Exception('User not found');
+            throw UserException::userNotFound();
         }
+
         if (!$course){
-            throw new \Exception('Course not found');
+            throw UserException::courseNotFound();
         }
         $user->courses()->attach($course->id);
         return $user->load('courses');
@@ -87,11 +91,11 @@ class UserService
     {
         $user = User::find($dto->id);
         if (!$user){
-            throw new \Exception('User not found');
+            throw UserException::userNotFound();
         }
 
         if (!$course->id){
-            throw new \Exception('Course not found');
+            throw UserException::courseNotFound();
         }
 
         $user->courses()->detach($course);
@@ -104,16 +108,16 @@ class UserService
     public function serviceSignOut(): bool
     {
         if (!Auth::check()){
-            throw new \Exception('Not authenticated');
+            throw UserException::notLoggedIn();
         }
 
         $user = Auth::user();
         try {
             $user->tokens()->delete();;
             return true;
-        }catch (\Exception $exception){
+        }catch (UserException $exception){
             Log::error('Error revoking tokens for user ' . $user->id . ': ' . $exception->getMessage());
-            throw new Exception('Failed to log out user', $exception);
+            throw UserException::unableToLogout();
         }
     }
 }
