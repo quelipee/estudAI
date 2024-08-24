@@ -10,9 +10,10 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Course extends Model
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, RefreshDatabase;
 
-    use RefreshDatabase;
+    protected $table = 'courses';
+
     protected $fillable = [
         'title',
         'description',

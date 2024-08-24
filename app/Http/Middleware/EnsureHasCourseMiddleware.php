@@ -19,10 +19,10 @@ class EnsureHasCourseMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $course = Course::find($request->segment(3));
+        $course = Course::find($request->route('course'))->first();
         $user = Auth::user();
 
-        if (!$user->load('courses')->courses->contains($course)) {
+        if (!$user->courses->contains($course)) {
             throw new Exception('User is not enrolled in this course');
         }
         return $next($request);

@@ -27,7 +27,7 @@ class RequestsAPI implements IChatIA
             Content::text('Bom dia, nao responda as minhas perguntas que não forem relacionadas a' . $course->title, Role::User),
             Content::text(
                 <<<TEXT
-                Bom Dia!!! Vou te ensinar mais sobre `{$course->title}` oque gostaria de aprender?
+                5 Topicos sobre `{$course->title}`
                 TEXT,
                 Role::Model,
             ),
@@ -38,10 +38,10 @@ class RequestsAPI implements IChatIA
             ->withHistory($history);
 
         $response = $chat->sendMessage(new TextPart(''));
-        print_r($response->text());
+//        print_r($response->text());
         return response()->json([
             'message' => 'request to chat ok',
             'request' => $response->text(),
-        ]);
+        ],200);
     }
 }
