@@ -2,13 +2,13 @@
 namespace App\Domains\UserDomain\UserController;
 
 
+use App\Domains\UserDomain\AuthServiceContract;
 use App\Domains\UserDomain\UserDTO\SignInDTO;
 use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
 use App\Domains\UserDomain\UserRequest\UserRequest;
 use App\Domains\UserDomain\UserRequest\UserSignUpRequest;
 use App\Domains\UserDomain\UserRequest\UserSignInRequest;
-use App\Domains\UserDomain\UserService\UserService;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use Exception;
@@ -16,15 +16,16 @@ use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
-    public function __construct(public UserService $userService){}
+    public function __construct(
+        protected AuthServiceContract $userService
+    ){}
 
     /**
      * @throws Exception
      */
     public function signUp(UserSignUpRequest $request): JsonResponse
     {
-        $user = $this->userService->
-        serviceSignUp(SignUpDTO::fromValidatedRequest($request));
+        $user = $this->userService-> serviceSignUp(SignUpDTO::fromValidatedRequest($request));
 
         return response()->json([
             'message' => 'User created successfully',

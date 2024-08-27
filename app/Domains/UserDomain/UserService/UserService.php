@@ -2,6 +2,7 @@
 
 namespace App\Domains\UserDomain\UserService;
 
+use App\Domains\UserDomain\AuthServiceContract;
 use App\Domains\UserDomain\UserDTO\SignInDTO;
 use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
@@ -10,13 +11,10 @@ use App\Models\Course;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use mysql_xdevapi\Exception;
 
-class UserService
+class UserService implements AuthServiceContract
 {
-    public function __construct(
-        protected User $user
-    ){}
+    public function __construct(){}
 
 
     /**
@@ -42,7 +40,7 @@ class UserService
      *
      * */
     public function CheckExistsEmail($email) : bool{
-        return $this->user->where('email', $email)->exists();
+        return User::where('email', $email)->exists();
     }
 
     /**
