@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domains\UserDomain\UserException\UserException;
 use App\Models\Course;
 use Closure;
 use Exception;
@@ -19,9 +20,10 @@ class PreventDuplicateEnrollment
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        $course = Course::find($request->segment(3));
-        if ($user->load('courses')->courses->contains($course)) {
-            throw new Exception('User already enrolled in this course.');
+        $course = $request->route("course");
+
+        if ($user->courses()->exists($course)) {
+            throw UserException::userAlreadyEnrolled();
         }
         return $next($request);
     }

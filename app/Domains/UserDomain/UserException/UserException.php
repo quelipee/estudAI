@@ -33,4 +33,9 @@ class UserException extends \Exception
     {
         return new self('Email already exists');
     }
+
+    public static function userAlreadyEnrolled(): UserException
+    {
+        return new self('User already enrolled');
+    }
 }

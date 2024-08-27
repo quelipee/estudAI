@@ -107,7 +107,22 @@ class UserTest extends TestCase
         $user = User::find(1);
         $course = Course::find(1);
         $user->courses()->attach($course->id);
-        $response = $this->actingAs($user)->post('api/app/join-course/' . 2);
-        $response->assertStatus(Response::HTTP_FOUND);
+        $response = $this->actingAs($user)->post('api/app/join-course/' . $course->id);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    public function test_user_get_profile()
+    {
+        $user = User::factory()->create(['name' => 'felipe', 'email' => 'felipe@felip.com']);
+        Course::factory(5)->create();
+
+        $user->courses()->attach([1,2,3]);
+
+        $response = $this->actingAs($user)->get('api/app/profile');
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertDatabaseHas('users',[
+            'name' => 'felipe',
+            'email' => 'felipe@felip.com'
+        ]);
     }
 }

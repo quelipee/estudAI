@@ -3,6 +3,7 @@ namespace App\Domains\UserDomain\UserController;
 
 
 use App\Domains\UserDomain\AuthServiceContract;
+use App\Domains\UserDomain\Resources\UserResource;
 use App\Domains\UserDomain\UserDTO\SignInDTO;
 use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
@@ -74,7 +75,6 @@ class UserController extends Controller
         $user_courses = $this->userService->
         newJoinCourse($course, UserDTO::fromValidatedRequest($request));
 
-//        print_r($user_courses->toArray());
         return response()->json([
             'message' => 'Course joined successfully',
             'course' => $user_courses,
@@ -92,5 +92,14 @@ class UserController extends Controller
             'message' => 'Course leaved successfully',
             'status' => $leave
         ],201);
+    }
+
+    public function loadUserProfile() : JsonResponse
+    {
+        $profileResource = $this->userService->getUserProfile();
+        return response()->json([
+            'message' => 'user profile loaded successfully',
+            'profile' => UserResource::make($profileResource)
+        ],200);
     }
 }

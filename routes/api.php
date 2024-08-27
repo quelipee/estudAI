@@ -26,6 +26,7 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('leave-course/{course}',[UserController::class,'leaveCourse'])->name('leave-course');
     Route::get('requestChat/{course}',[RequestsAPI::class,'requestChat'])->name('requestChat')
         ->middleware(EnsureHasCourseMiddleware::class);
+    Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });
 
 Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');

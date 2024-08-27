@@ -9,6 +9,7 @@ use App\Domains\UserDomain\UserDTO\UserDTO;
 use App\Domains\UserDomain\UserException\UserException;
 use App\Models\Course;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -16,9 +17,8 @@ class UserService implements AuthServiceContract
 {
     public function __construct(){}
 
-
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function serviceSignUp(SignUpDTO $dto): User
     {
@@ -44,7 +44,7 @@ class UserService implements AuthServiceContract
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function serviceSignIn(SignInDTO $dto): array
     {
@@ -66,7 +66,7 @@ class UserService implements AuthServiceContract
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function newJoinCourse(Course $course, UserDTO $dto) : User
     {
@@ -78,12 +78,17 @@ class UserService implements AuthServiceContract
         if (!$course){
             throw UserException::courseNotFound();
         }
+
+        if ($user->courses()->exists($course)){
+            throw UserException::userAlreadyEnrolled();
+        }
+
         $user->courses()->attach($course->id);
         return $user->load('courses');
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function deleteUserCourse(Course $course, UserDTO $dto) : bool
     {
@@ -101,7 +106,7 @@ class UserService implements AuthServiceContract
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function serviceSignOut(): bool
     {
@@ -117,5 +122,17 @@ class UserService implements AuthServiceContract
             Log::error('Error revoking tokens for user ' . $user->id . ': ' . $exception->getMessage());
             throw UserException::unableToLogout();
         }
+    }
+
+    /**
+     * @throws UserException
+     */
+    public function getUserProfile() : User
+    {
+        $user = Auth::user();
+        if (!$user){
+            throw UserException::notLoggedIn();
+        }
+        return $user->load('courses');
     }
 }
