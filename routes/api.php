@@ -17,7 +17,6 @@ Route::middleware(['guest:sanctum'])->group(function () {
     Route::post('login', [UserController::class,'signIn'])->name('signIn');
 });
 
-Route::get('courses',[CourseController::class,'courses'])->name('courses');
 
 Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [UserController::class,'signOut'])->name('signOut');
@@ -29,5 +28,10 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });
 
-Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');
+Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
+    Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');
+    Route::get('courses',[CourseController::class,'courses'])->name('courses');
+    Route::post('deleteCourse/{course}',[CourseController::class,'deleteCourse'])->name('deleteCourse');
+});
+
 

@@ -4,6 +4,7 @@ namespace App\Domains\CourseDomain\CourseController;
 
 use App\Domains\CourseDomain\CourseDTO\newCourseDTO;
 use App\Domains\CourseDomain\CourseService\CourseService;
+use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\CourseDomain\Requests\CourseRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -14,12 +15,12 @@ use JetBrains\PhpStorm\NoReturn;
 class CourseController extends Controller
 {
     public function __construct(
-        protected CourseService $courseService
+        protected CourseTopicsContracts $courseTopicsService,
     ){}
 
     public function courses(): JsonResponse
     {
-        $collections = $this->courseService->getAllCourses();
+        $collections = $this->courseTopicsService->getAllCourses();
         return response()->json([
             'message' => 'OK',
             'courses' => $collections
@@ -31,12 +32,20 @@ class CourseController extends Controller
      */
     public function newCourses(CourseRequest $request): JsonResponse
     {
-        $course = $this->courseService->
+        $course = $this->courseTopicsService->
         addCourse(newCourseDTO::fromValidatedNewCourse($request));
 
         return response()->json([
             $course
         ],
         201);
+    }
+
+    public function deleteCourse(CourseRequest $request): JsonResponse
+    {
+        $this->courseTopicsService->destroyCourse(newCourseDTO::fromValidatedNewCourse($request));
+        return response()->json([
+            'message' => 'Course deleted',
+        ],200);
     }
 }

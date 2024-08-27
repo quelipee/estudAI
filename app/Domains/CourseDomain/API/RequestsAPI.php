@@ -38,7 +38,7 @@ class RequestsAPI implements IChatIA
             ->withHistory($history);
 
         $response = $chat->sendMessage(new TextPart(''));
-//        print_r($response->text());
+        print_r($response->text());
         return response()->json([
             'message' => 'request to chat ok',
             'request' => $response->text(),

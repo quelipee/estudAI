@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Domains\CourseDomain\Enums\Category;
 use App\Models\Course;
+use App\Models\Topic;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,13 +29,28 @@ class CourseTest extends TestCase
 
     public function test_create_course()
     {
+        $user = User::factory()->create();
         $payload = [
             'title' => 'curso de python basico',
             'description' => 'neste curso de python basico você irá aprender do zero tudo sobre a ferramenta de desenvolvimento.',
             'category' => Category::SoftwareDevelopment->value,
+                'topics' => [
+                    'Variáveis e Tipos de Dados' => 'Aprenda sobre como armazenar e manipular
+                    dados em variáveis, incluindo diferentes tipos de dados como números, strings e listas.',
+
+                    'Estrutura de Controle' => 'Entenda como controlar o fluxo do programa usando instruções como if,
+                    else e loops for e while',
+
+                    'Funções' => 'Crie e use funções para modularizar seu código e reutilizar blocos de funcionalidade.',
+
+                    'Listas e Tuplas:' => 'Explore estruturas de dados como listas (arrays dinâmicos) e tuplas (arrays imutáveis)
+                    para armazenar e processar coleções de dados.',
+
+                    'Entrada e Saída' => 'Aprenda como obter dados do usuário e exibir resultados usando funções como `input()` e `print()`.'
+                ]
         ];
 
-        $response = $this->post('api/newCourses', $payload);
+        $response = $this->actingAs($user)->post('api/admin/newCourses', $payload);
         $response->assertStatus(Response::HTTP_CREATED);
     }
 
@@ -45,6 +61,23 @@ class CourseTest extends TestCase
         $course = Course::find(4);
         $user->courses()->attach($course->id);
         $response = $this->actingAs($user)->get('api/app/requestChat/' . $course->id);
+        $response->assertStatus(Response::HTTP_OK);
+    }
+
+    public function test_delete_course()
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create()->first();
+        Topic::factory()->create();
+
+        $payload = [
+            'title' => $course->title,
+            'description' => $course->description,
+            'category' => $course->category,
+            'topics' => $course->topics->toArray(),
+        ];
+
+        $response = $this->actingAs($user)->post('api/admin/deleteCourse/' . $course->id, $payload );
         $response->assertStatus(Response::HTTP_OK);
     }
 

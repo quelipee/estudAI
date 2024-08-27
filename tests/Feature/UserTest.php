@@ -85,8 +85,8 @@ class UserTest extends TestCase
     public function test_view_courses()
     {
         $user = User::factory()->create();
-        Course::factory(10)->create();
-        $response = $this->actingAs($user)->get('/api/courses');
+        Course::factory(5)->create();
+        $response = $this->actingAs($user)->get('api/admin/courses');
         $response->assertStatus(Response::HTTP_OK);
     }
 

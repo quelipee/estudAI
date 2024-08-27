@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domains\CourseDomain\CourseService\CourseService;
+use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\UserDomain\AuthServiceContract;
 use App\Domains\UserDomain\UserService\UserService;
 use GeminiAPI\Client;
@@ -20,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(AuthServiceContract::class,function ($app){
             return new UserService();
+        });
+
+        $this->app->singleton(CourseTopicsContracts::class,function ($app){
+            return new CourseService();
         });
     }
 

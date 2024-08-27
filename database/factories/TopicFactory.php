@@ -3,13 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Course;
-use App\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Course>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Topic>
  */
-class CourseFactory extends Factory
+class TopicFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,9 +18,9 @@ class CourseFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->text(10),
-            'description' => fake()->text(20),
-            'category' => fake()->text(10),
+            'title' => $this->faker->text(10),
+            'topic' => $this->faker->text(),
+            'course_id' => Course::first(),
         ];
     }
 }

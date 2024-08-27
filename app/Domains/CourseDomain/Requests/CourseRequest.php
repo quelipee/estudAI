@@ -26,6 +26,7 @@ class CourseRequest extends FormRequest
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
             'category' => ['required', 'string'],
+            'topics' => ['required', 'array'],
         ];
     }
 }

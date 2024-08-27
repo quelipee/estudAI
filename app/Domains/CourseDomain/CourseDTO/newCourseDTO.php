@@ -11,6 +11,7 @@ readonly class newCourseDTO
         public string $title,
         public string $description,
         public string $category,
+        public array $topics,
     ){}
 
     public static function fromValidatedNewCourse(CourseRequest $request): newCourseDTO
@@ -19,6 +20,7 @@ readonly class newCourseDTO
             title: $request->validated('title'),
             description: $request->validated('description'),
             category: $request->validated('category'),
+            topics: $request->validated('topics'),
         );
     }
 }
