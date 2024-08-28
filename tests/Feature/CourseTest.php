@@ -29,7 +29,7 @@ class CourseTest extends TestCase
 
     public function test_create_course()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['is_admin' => true]);
         $payload = [
             'title' => 'curso de python basico',
             'description' => 'neste curso de python basico você irá aprender do zero tudo sobre a ferramenta de desenvolvimento.',
@@ -53,7 +53,13 @@ class CourseTest extends TestCase
         $response = $this->actingAs($user)->post('api/admin/newCourses', $payload);
         $response->assertStatus(Response::HTTP_CREATED);
     }
-
+    public function test_view_courses()
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        Course::factory()->create();
+        $response = $this->actingAs($user)->get('api/admin/courses');
+        $response->assertStatus(Response::HTTP_OK);
+    }
     public function test_connectAPI()
     {
         Artisan::call('migrate:refresh --seed');
@@ -66,7 +72,7 @@ class CourseTest extends TestCase
 
     public function test_delete_course()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['is_admin' => true]);
         $course = Course::factory()->create()->first();
         Topic::factory()->create();
 

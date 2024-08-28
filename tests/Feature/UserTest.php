@@ -81,15 +81,6 @@ class UserTest extends TestCase
 
         $response->assertStatus(Response::HTTP_CREATED);
     }
-
-    public function test_view_courses()
-    {
-        $user = User::factory()->create();
-        Course::factory(5)->create();
-        $response = $this->actingAs($user)->get('api/admin/courses');
-        $response->assertStatus(Response::HTTP_OK);
-    }
-
     public function test_middleware_in_signIn()
     {
         $user = User::factory()->create(['password' => Hash::make('123456')]);
@@ -124,5 +115,13 @@ class UserTest extends TestCase
             'name' => 'felipe',
             'email' => 'felipe@felip.com'
         ]);
+    }
+
+    public function test_user_is_admin()
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+
+        $response = $this->actingAs($user)->get('api/admin/courses');
+        $response->assertStatus(Response::HTTP_OK);
     }
 }

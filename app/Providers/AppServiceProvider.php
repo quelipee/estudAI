@@ -24,8 +24,12 @@ class AppServiceProvider extends ServiceProvider
             return new UserService();
         });
 
-        $this->app->singleton(CourseTopicsContracts::class,function ($app){
-            return new CourseService();
+        $this->app->bind(CourseTopicsContracts::class,function ($app){
+            $config = $app['config']['usertype.provider_default'];
+            return match ($config){
+                'user' => new UserService(),
+                'admin' => new CourseService(),
+            };
         });
     }
 
