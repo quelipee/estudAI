@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class CourseService implements CourseTopicsContracts
 {
@@ -70,6 +71,25 @@ class CourseService implements CourseTopicsContracts
         }
 
         return true;
+    }
+
+    /**
+     * @throws CourseException
+     */
+    public function updateCourse(newCourseDTO $dto, int $id): Course
+    {
+        if (!$id){
+            Log::error('Not found!!');
+            throw CourseException::courseNotfound($dto->title);
+        }
+        Course::query()->where('id', $id)->update([
+            'title' => $dto->title,
+            'description' => $dto->description,
+            'category' => $dto->category,
+            'updated_at' => now()
+        ]);
+        Log::info('Course update with success!!');
+        return Course::find($id);
     }
 
     public function existCourse($title) : bool

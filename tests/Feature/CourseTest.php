@@ -87,6 +87,27 @@ class CourseTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
     }
 
+    public function test_update_course()
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        $course = Course::factory()->create(['id' => 11])->first();
+        Topic::factory()->create();
+
+        $payload = [
+            'title' => 'curso de html iniciante',
+            'description' => 'Aprenda os fundamentos da construção de páginas web, criando e estruturando conteúdo com HTML de forma simples e prática, ideal para quem está começando no mundo do desenvolvimento web.',
+            'category' => Category::SoftwareDevelopment->value,
+            'topics' => [''],
+        ];
+        $response = $this->actingAs($user)->put('api/admin/updateCourse/' . $course->id, $payload);
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertDatabaseHas('courses', [
+            'title' => $payload['title'],
+            'description' => $payload['description'],
+            'category' => $payload['category']
+        ]);
+    }
+
 //    #[NoReturn] public function test123()
 //    {
 //        $guzzle = new Client();

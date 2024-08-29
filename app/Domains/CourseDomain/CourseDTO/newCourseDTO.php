@@ -11,7 +11,7 @@ readonly class newCourseDTO
         public string $title,
         public string $description,
         public string $category,
-        public array $topics,
+        public ?array $topics,
     ){}
 
     public static function fromValidatedNewCourse(CourseRequest $request): newCourseDTO

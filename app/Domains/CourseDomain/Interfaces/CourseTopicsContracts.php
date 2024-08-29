@@ -10,6 +10,6 @@ interface CourseTopicsContracts
 {
     public function addCourse(newCourseDTO $dto) : Course;
     public function getAllCourses() : Collection;
-
-    public function destroyCourse(newCourseDTO $dto);
+    public function destroyCourse(newCourseDTO $dto) : bool;
+    public function updateCourse(newCourseDTO $dto, int $id) : Course;
 }

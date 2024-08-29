@@ -48,4 +48,13 @@ class CourseController extends Controller
             'message' => 'Course deleted',
         ],200);
     }
+
+    public function updateCourse(CourseRequest $request, int $id) : JsonResponse
+    {
+        $courseUpdate = $this->courseTopicsService->updateCourse(newCourseDTO::fromValidatedNewCourse($request), $id);
+        return response()->json([
+            'message' => 'Course updated',
+            'course' => $courseUpdate
+        ],200);
+    }
 }

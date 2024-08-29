@@ -33,6 +33,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', isAdminMiddleware::class])->
     Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');
     Route::get('courses',[CourseController::class,'courses'])->name('courses');
     Route::post('deleteCourse/{course}',[CourseController::class,'deleteCourse'])->name('deleteCourse');
+    Route::put('updateCourse/{course}',[CourseController::class,'updateCourse'])->name('updateCourse');
 });
 
 
