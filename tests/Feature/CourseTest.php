@@ -35,18 +35,18 @@ class CourseTest extends TestCase
             'description' => 'neste curso de python basico você irá aprender do zero tudo sobre a ferramenta de desenvolvimento.',
             'category' => Category::SoftwareDevelopment->value,
                 'topics' => [
-                    'Variáveis e Tipos de Dados' => 'Aprenda sobre como armazenar e manipular
-                    dados em variáveis, incluindo diferentes tipos de dados como números, strings e listas.',
-
-                    'Estrutura de Controle' => 'Entenda como controlar o fluxo do programa usando instruções como if,
-                    else e loops for e while',
-
-                    'Funções' => 'Crie e use funções para modularizar seu código e reutilizar blocos de funcionalidade.',
-
-                    'Listas e Tuplas:' => 'Explore estruturas de dados como listas (arrays dinâmicos) e tuplas (arrays imutáveis)
-                    para armazenar e processar coleções de dados.',
-
-                    'Entrada e Saída' => 'Aprenda como obter dados do usuário e exibir resultados usando funções como `input()` e `print()`.'
+                    [
+                        'title' => 'Variáveis e Tipos de Dados',
+                        'topic' => 'Aprenda sobre como armazenar e manipular dados em variáveis, incluindo diferentes tipos de dados como números, strings e listas.'
+                    ],
+                    [
+                        'title' => 'Estrutura de Controle',
+                        'topic' => 'Entenda como controlar o fluxo do programa usando instruções como if,else e loops for e while'
+                    ],
+                    [
+                        'title' => 'Funções',
+                        'topic' => 'Crie e use funções para modularizar seu código e reutilizar blocos de funcionalidade.'
+                    ],
                 ]
         ];
 
@@ -97,7 +97,10 @@ class CourseTest extends TestCase
             'title' => 'curso de html iniciante',
             'description' => 'Aprenda os fundamentos da construção de páginas web, criando e estruturando conteúdo com HTML de forma simples e prática, ideal para quem está começando no mundo do desenvolvimento web.',
             'category' => Category::SoftwareDevelopment->value,
-            'topics' => [''],
+            'topics' => [
+                'title' => 'Introdução ao HTML',
+                'topic' => 'A introdução ao HTML ensina os conceitos básicos da linguagem, como a estrutura de um documento e o uso de tags para criar páginas web.'
+            ],
         ];
         $response = $this->actingAs($user)->put('api/admin/updateCourse/' . $course->id, $payload);
         $response->assertStatus(Response::HTTP_OK);
@@ -105,6 +108,10 @@ class CourseTest extends TestCase
             'title' => $payload['title'],
             'description' => $payload['description'],
             'category' => $payload['category']
+        ]);
+        $this->assertDatabaseHas('courseTopics',[
+           'title' => $payload['topics']['title'],
+           'topic' => $payload['topics']['topic'],
         ]);
     }
 

@@ -28,13 +28,14 @@ class CourseService implements CourseTopicsContracts
             'category' => $dto->category,
         ]);
 
-        foreach ($dto->topics as $key => $topic){
-            $title = $key;
-            Topic::create([
-                'title' => $title,
-                'topics' => $topic,
-                'course_id' => $course->id
-            ]);
+        if ($dto->topics != null and $dto->topics != ['']) {
+            foreach ($dto->topics as $topic) {
+                Topic::create([
+                    'title' => $topic['title'],
+                    'topic' => $topic['topic'],
+                    'course_id' => $course->id
+                ]);
+            }
         }
 
         return $course;
@@ -78,7 +79,7 @@ class CourseService implements CourseTopicsContracts
      */
     public function updateCourse(newCourseDTO $dto, int $id): Course
     {
-        if (!$id){
+        if (Course::query()->where(['id' => $id])->doesntExist()){
             Log::error('Not found!!');
             throw CourseException::courseNotfound($dto->title);
         }
@@ -88,6 +89,15 @@ class CourseService implements CourseTopicsContracts
             'category' => $dto->category,
             'updated_at' => now()
         ]);
+
+        if ($dto->topics != null and $dto->topics != ['']){
+            Topic::query()->where('course_id',$id)->update([
+                'title' => $dto->topics['title'],
+                'topic' => $dto->topics['topic'],
+                'updated_at' => now(),
+            ]);
+        }
+
         Log::info('Course update with success!!');
         return Course::find($id);
     }
