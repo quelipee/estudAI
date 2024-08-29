@@ -121,7 +121,7 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create(['is_admin' => true]);
 
-        $response = $this->actingAs($user)->get('api/admin/courses');
+        $response = $this->actingAs($user)->get('admin/courses');
         $response->assertStatus(Response::HTTP_OK);
     }
 }

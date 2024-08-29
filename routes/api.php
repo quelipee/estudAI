@@ -1,10 +1,8 @@
 <?php
 
 use App\Domains\CourseDomain\API\RequestsAPI;
-use App\Domains\CourseDomain\CourseController\CourseController;
 use App\Domains\UserDomain\UserController\UserController;
 use App\Http\Middleware\EnsureHasCourseMiddleware;
-use App\Http\Middleware\isAdminMiddleware;
 use App\Http\Middleware\PreventDuplicateEnrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,11 +27,4 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });
 
-Route::prefix('admin')->middleware(['auth:sanctum', isAdminMiddleware::class])->group(function () {
-    Route::post('newCourses', [CourseController::class,'newCourses'])->name('newCourses');
-    Route::get('courses',[CourseController::class,'courses'])->name('courses');
-    Route::post('deleteCourse/{course}',[CourseController::class,'deleteCourse'])->name('deleteCourse');
-    Route::put('updateCourse/{course}',[CourseController::class,'updateCourse'])->name('updateCourse');
-});
-
-
+Route::post('chat/{course}/topic/{topic}/message',[\App\Domains\ChatDomain\Controllers\ChatController::class,'chatTopic'])->name('sendChat');

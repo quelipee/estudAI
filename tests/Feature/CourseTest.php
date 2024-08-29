@@ -50,14 +50,14 @@ class CourseTest extends TestCase
                 ]
         ];
 
-        $response = $this->actingAs($user)->post('api/admin/newCourses', $payload);
+        $response = $this->actingAs($user)->post('admin/newCourses', $payload);
         $response->assertStatus(Response::HTTP_CREATED);
     }
     public function test_view_courses()
     {
         $user = User::factory()->create(['is_admin' => true]);
         Course::factory()->create();
-        $response = $this->actingAs($user)->get('api/admin/courses');
+        $response = $this->actingAs($user)->get('admin/courses');
         $response->assertStatus(Response::HTTP_OK);
     }
     public function test_connectAPI()
@@ -83,7 +83,7 @@ class CourseTest extends TestCase
             'topics' => $course->topics->toArray(),
         ];
 
-        $response = $this->actingAs($user)->post('api/admin/deleteCourse/' . $course->id, $payload );
+        $response = $this->actingAs($user)->post('admin/deleteCourse/' . $course->id, $payload );
         $response->assertStatus(Response::HTTP_OK);
     }
 
@@ -102,7 +102,7 @@ class CourseTest extends TestCase
                 'topic' => 'A introdução ao HTML ensina os conceitos básicos da linguagem, como a estrutura de um documento e o uso de tags para criar páginas web.'
             ],
         ];
-        $response = $this->actingAs($user)->put('api/admin/updateCourse/' . $course->id, $payload);
+        $response = $this->actingAs($user)->put('admin/updateCourse/' . $course->id, $payload);
         $response->assertStatus(Response::HTTP_OK);
         $this->assertDatabaseHas('courses', [
             'title' => $payload['title'],
