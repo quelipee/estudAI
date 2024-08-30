@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Course extends Model
 {
-    use HasFactory, Notifiable, HasApiTokens, RefreshDatabase;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = 'courses';
 

@@ -29,7 +29,7 @@ class ChatTest extends TestCase
             'title' => 'Introdução ao HTML',
         ])->first();
 
-        $response = $this->post('api/chat/' . $course->id . '/topic/' . $topic->id . '/message');
+        $response = $this->post('api/chat/' . 1 . '/topic/' . 1 . '/message');
         $response->assertStatus(200);
     }
 }

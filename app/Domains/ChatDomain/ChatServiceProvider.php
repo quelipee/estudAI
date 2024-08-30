@@ -9,7 +9,7 @@ class ChatServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(ChatContracts::class, function ($app) {
+        $this->app->singleton(ChatContracts::class, function ($app) {
            return new ChatService(env('GEMINI_API_KEY'));
         });
     }
