@@ -36,25 +36,28 @@ class ChatService implements ChatContracts
             ->first();
 
         $text = 'me ensine sobre este topico: ' . $topic->title;
-        MessageHistory::create([
+
+        $user = new MessageHistory([
             'message' => $text,
             'role' => Role::User->name,
-            'user_id' => Auth::id(),
-            'course_id' => $course->id,
-            'topic_id' => $topic->id
         ]);
+        $user->user()->associate(Auth::id());
+        $user->course()->associate($course);
+        $user->topic()->associate($topic);
+        $user->save();
 
         $history = $this->retrieveConversationLog($course, $topic);
         $message = new TextPart($text);
-
         $response = $this->chat->withHistory($history)->sendMessage($message);
-        MessageHistory::create([
+
+        $model = new MessageHistory([
             'message' => $response->text(),
             'role' => Role::Model->name,
-            'user_id' => Auth::id(),
-            'course_id' => $course->id,
-            'topic_id' => $topic->id
         ]);
+        $model->user()->associate(Auth::id());
+        $model->course()->associate($course);
+        $model->topic()->associate($topic);
+        $model->save();
 
         return $response;
     }
