@@ -29,4 +29,9 @@ class Course extends Model
     {
         return $this->hasMany(Topic::class);
     }
+
+    public function messageHistory(): HasMany
+    {
+        return $this->hasMany(MessageHistory::class);
+    }
 }

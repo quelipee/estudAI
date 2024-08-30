@@ -60,16 +60,6 @@ class CourseTest extends TestCase
         $response = $this->actingAs($user)->get('admin/courses');
         $response->assertStatus(Response::HTTP_OK);
     }
-    public function test_connectAPI()
-    {
-        Artisan::call('migrate:refresh --seed');
-        $user = User::find(1);
-        $course = Course::find(4);
-        $user->courses()->attach($course->id);
-        $response = $this->actingAs($user)->get('api/app/requestChat/' . $course->id);
-        $response->assertStatus(Response::HTTP_OK);
-    }
-
     public function test_delete_course()
     {
         $user = User::factory()->create(['is_admin' => true]);

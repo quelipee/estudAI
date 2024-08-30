@@ -11,6 +11,7 @@ use GeminiAPI\Enums\Role;
 use GeminiAPI\Resources\Content;
 use GeminiAPI\Resources\Parts\TextPart;
 use GeminiAPI\Responses\GenerateContentResponse;
+use Illuminate\Support\Facades\Auth;
 use Psr\Http\Client\ClientExceptionInterface;
 
 class ChatService implements ChatContracts
@@ -29,26 +30,28 @@ class ChatService implements ChatContracts
      */
     public function receive_topic(Course $course, int $topic): GenerateContentResponse
     {
-        $topic =Topic::query()->where('course_id',$course->id)->where('id',$topic)->first();
-
+        $topic =Topic::query()
+            ->where('course_id',$course->id)
+            ->where('id',$topic)
+            ->first();
         $text = 'me ensine sobre este topico: ' . $topic->title;
         MessageHistory::create([
             'message' => $text,
-            'role' => Role::User->name
+            'role' => Role::User->name,
+            'user_id' => Auth::id(),
+            'course_id' => $course->id
         ]);
 
         $history = $this->retrieveConversationLog();
-
         $message = new TextPart($text);
-        $this->history[] = Content::text($message,Role::User);
 
         $response = $this->chat->withHistory($history)->sendMessage($message);
         MessageHistory::create([
             'message' => $response->text(),
-            'role' => Role::Model->name
+            'role' => Role::Model->name,
+            'user_id' => Auth::id(),
+            'course_id' => $course->id
         ]);
-
-        print_r($response->text());
 
         return $response;
     }

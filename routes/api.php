@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\ChatDomain\Controllers\ChatController;
 use App\Domains\CourseDomain\API\RequestsAPI;
 use App\Domains\UserDomain\UserController\UserController;
 use App\Http\Middleware\EnsureHasCourseMiddleware;
@@ -22,9 +23,11 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course')
         ->middleware(PreventDuplicateEnrollment::class);
     Route::post('leave-course/{course}',[UserController::class,'leaveCourse'])->name('leave-course');
-    Route::get('requestChat/{course}',[RequestsAPI::class,'requestChat'])->name('requestChat')
-        ->middleware(EnsureHasCourseMiddleware::class);
+
+    Route::get('chat/{course}/topic/{topic}/message',[ChatController::class,'chatTopic'])
+        ->name('sendChat')
+    ->middleware(EnsureHasCourseMiddleware::class);
+
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });
 
-Route::post('chat/{course}/topic/{topic}/message',[\App\Domains\ChatDomain\Controllers\ChatController::class,'chatTopic'])->name('sendChat');

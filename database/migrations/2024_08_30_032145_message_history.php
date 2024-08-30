@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('message_history', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->text('message');
             $table->text('role');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('course_id')->constrained('courses')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('message_histories');
+        Schema::dropIfExists('message_history');
     }
 };

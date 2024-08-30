@@ -18,7 +18,7 @@ class ChatController extends Controller
     {
         $response =  $this->chatContracts->receive_topic($course,$topic);
         return response()->json([
-            'message' => $response,
+            'message' => $response->text(),
         ],200);
     }
 }
