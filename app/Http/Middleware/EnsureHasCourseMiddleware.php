@@ -2,7 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Domains\CourseDomain\Exceptions\CourseException;
+use App\Domains\CourseDomain\Exceptions\TopicException;
+use App\Domains\UserDomain\UserException\UserException;
 use App\Models\Course;
+use App\Models\Topic;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,12 +23,28 @@ class EnsureHasCourseMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $course = Course::find($request->route('course'))->first();
+        $topic = Topic::where('id',request('topic'))->first();
+        if (!$topic)
+        {
+            return throw TopicException::topicNotFound($topic);
+        }
+
+        $courseId = request('course');
+        $course = Course::where('id',$courseId->id)->first();
+        if (!$course)
+        {
+            return throw CourseException::courseNotFound($course->title);
+        }
         $user = Auth::user();
 
         if (!$user->courses->contains($course)) {
-            throw new Exception('User is not enrolled in this course');
+            throw UserException::notUnregisteredCourse();
         }
+
+        if (!$course->topics->contains($topic)) {
+            throw TopicException::topicNotFound($topic->title);
+        }
+
         return $next($request);
     }
 }

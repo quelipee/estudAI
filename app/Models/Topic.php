@@ -24,4 +24,9 @@ class Topic extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function messageHistory()
+    {
+        return $this->hasMany(MessageHistory::class);
+    }
 }

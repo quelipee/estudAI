@@ -26,7 +26,7 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
 
     Route::get('chat/{course}/topic/{topic}/message',[ChatController::class,'chatTopic'])
         ->name('sendChat')
-    ->middleware(EnsureHasCourseMiddleware::class);
+        ->middleware(EnsureHasCourseMiddleware::class);
 
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });

@@ -43,4 +43,9 @@ class UserException extends \Exception
     {
         return new self('Not authorized');
     }
+
+    public static function notUnregisteredCourse(): UserException
+    {
+        return new self('User is not enrolled in this course');
+    }
 }

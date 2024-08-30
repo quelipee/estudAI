@@ -34,15 +34,17 @@ class ChatService implements ChatContracts
             ->where('course_id',$course->id)
             ->where('id',$topic)
             ->first();
+
         $text = 'me ensine sobre este topico: ' . $topic->title;
         MessageHistory::create([
             'message' => $text,
             'role' => Role::User->name,
             'user_id' => Auth::id(),
-            'course_id' => $course->id
+            'course_id' => $course->id,
+            'topic_id' => $topic->id
         ]);
 
-        $history = $this->retrieveConversationLog();
+        $history = $this->retrieveConversationLog($course, $topic);
         $message = new TextPart($text);
 
         $response = $this->chat->withHistory($history)->sendMessage($message);
@@ -50,17 +52,22 @@ class ChatService implements ChatContracts
             'message' => $response->text(),
             'role' => Role::Model->name,
             'user_id' => Auth::id(),
-            'course_id' => $course->id
+            'course_id' => $course->id,
+            'topic_id' => $topic->id
         ]);
 
         return $response;
     }
 
-    public function retrieveConversationLog(): array
+    public function retrieveConversationLog(Course $course, Topic $topic): array
     {
         $history = [];
-        $entries = MessageHistory::all();
-        foreach ($entries->toArray() as $historyEntry)
+        $entries = MessageHistory::query()
+            ->where('user_id',Auth::id())
+            ->where('course_id', $course->id)
+            ->where('topic_id',$topic->id)->get();
+
+        foreach ($entries as $historyEntry)
         {
             $roleMap = [
                 Role::User->name => Role::User,

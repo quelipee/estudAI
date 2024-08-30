@@ -21,12 +21,13 @@ class ChatTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testApiRequestResponse(): void
+    public function testApiGetResponseForTopicById(): void
     {
         $user = User::factory()->create(['is_admin' => false]);
         $course = Course::factory()->create([
             'title' => 'curso de html iniciante',
         ])->first();
+
         $topic = Topic::factory()->create([
             'title' => 'Introdução ao HTML',
         ])->first();

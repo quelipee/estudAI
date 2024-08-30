@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('role');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('topic_id')->constrained('courseTopics')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
