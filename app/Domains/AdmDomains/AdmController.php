@@ -27,7 +27,7 @@ class AdmController extends Controller
         );
 
         return redirect(
-            route('index'),
+            route('dashboard'),
             ResponseAlias::HTTP_CREATED);
     }
 

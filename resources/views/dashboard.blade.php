@@ -61,9 +61,8 @@
         }
 
         .content {
-            margin: 20px auto;
             padding: 20px;
-            width: 1500px;
+            width: 1700px;
             max-width: 1700px; /* Largura máxima do conteúdo */
             background-color: #fff;
             border-radius: 8px;
@@ -174,9 +173,15 @@
     </div>
 
     <div class="card">
-        <h3>Statistics</h3>
-        <!-- Include your chart or graph here -->
-        <p>Graph showing courses by category...</p>
+        <h3>Recent Updates</h3>
+        <ul>
+            @foreach ($courses as $update)
+                <li>
+                    <span class="activity-title">{{ $update->title }}</span>
+                    <span class="activity-date">{{ $update->updated_at->format('d M Y H:i') }}
+                </li>
+            @endforeach
+        </ul>
     </div>
 
     <div class="card">
