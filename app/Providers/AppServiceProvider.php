@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Domains\AdmDomains\AuthManagerContract;
+use App\Domains\AdmDomains\ManagerException;
+use App\Domains\AdmDomains\Services\AuthManagerService;
 use App\Domains\CourseDomain\CourseService\CourseService;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\UserDomain\AuthServiceContract;
@@ -29,6 +32,15 @@ class AppServiceProvider extends ServiceProvider
             return match ($config){
                 'user' => new UserService(),
                 'admin' => new CourseService(),
+                default => throw ManagerException::managerNotFound()
+            };
+        });
+
+        $this->app->singleton(AuthManagerContract::class,function ($app){
+            $config = $app['config']['usertype.provider_default'];
+            return match ($config){
+                'admin' => new AuthManagerService(),
+                default => throw ManagerException::userNotAuthenticated(),
             };
         });
     }
