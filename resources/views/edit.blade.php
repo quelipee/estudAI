@@ -81,7 +81,7 @@
             color: #333;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px;
             border-radius: 5px;
@@ -154,7 +154,7 @@
 <div class="sidebar">
     <h2>Admin Panel</h2>
     <ul>
-        <li><a href="{{ route('index') }}">Dashboard</a></li>
+        <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
         <li><a href="{{ route('index') }}">Courses</a></li>
         <li><a href="{{ route('index') }}">Settings</a></li>
         <li><a href="{{ route('admin.logout') }}">Logout</a></li>
@@ -201,7 +201,7 @@
             <h3>{{ $topic->title }}</h3>
             <p>{{ $topic->topic }}</p>
             <a href="{{ route('index', $topic->id) }}" class="btn btn-primary">Edit Topic</a>
-            <form action="{{ route('courses.destroy', $topic->id) }}" method="POST" style="display:inline;">
+            <form action="{{ route('topic.delete', $topic->id) }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger">Delete Topic</button>
@@ -211,7 +211,7 @@
     @endif
 
     <h2>Add New Topic</h2>
-    <form action="" method="POST">{{--store--}}
+    <form action="{{ route('topics.store',$course->id) }}" method="POST">
         @csrf
         <input type="hidden" name="course_id" value="{{ $course->id }}">
 

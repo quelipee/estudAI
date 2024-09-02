@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Course Management</title>
+    <title>Create Course</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         * {
@@ -71,6 +71,29 @@
             font-weight: 600;
         }
 
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -80,7 +103,7 @@
             text-decoration: none;
             font-weight: 500;
             transition: background-color 0.3s ease;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
         .btn-primary {
@@ -99,57 +122,31 @@
             background-color: #c82333;
         }
 
-        .course-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .course-item {
-            background: white;
+        .topic-item {
+            background: #fff;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             margin-bottom: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .course-item:hover {
-            background-color: #f1f1f1;
-        }
-
-        .course-item-content {
-            display: flex;
-            justify-content: space-between;
             padding: 15px;
         }
 
-        .course-item-content h3 {
-            margin: 0;
+        .topic-item h3 {
+            margin-bottom: 10px;
             color: #333;
         }
 
-        .course-item-content p {
-            margin: 0;
+        .topic-item p {
+            margin-bottom: 10px;
             color: #666;
         }
 
-        .course-item-actions {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-top: 1px solid #ddd;
-            background: #f9f9f9;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+        .topic-item .btn {
+            margin-top: 10px;
         }
 
-        .actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .course-item-actions .btn {
-            margin-left: 10px;
+        .form-group button {
+            display: inline-block;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -164,30 +161,47 @@
     </ul>
 </div>
 <div class="content">
-    <h1>Course Management</h1>
-    <a href="{{ route('course.create') }}" class="btn btn-primary">Add New Course</a>
-    <ul class="course-list">
-        @foreach ($courses as $course)
-{{--            @dd($course->topics)--}}
-            <li class="course-item" onclick="window.location.href='{{ route('edit', $course['id']) }}'">
-                <div class="course-item-content">
-                    <div>
-                        <h3>{{ $course['title'] }}</h3>
-                        <p>{{ $course['description'] }}</p>
-                    </div>
-                    <div class="actions">
-                        <form action="{{ route('courses.destroy', $course['id']) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                        <div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        @endforeach
-    </ul>
+    <h1>Create Course</h1>
+
+    <form action="{{ route('course.store') }}" method="POST">
+        @csrf
+
+        <div class="form-group">
+            <label for="title">Course Title</label>
+            <input type="text" id="title" name="title" value="{{ old('title') }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Course Description</label>
+            <textarea id="description" name="description" required>{{ old('description') }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" class="form-control" required>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->value }}" {{ old('category') === $category->value ? 'selected' : '' }}>
+                        {{ $category->value }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <h2 style="margin-bottom: 10px">Add Topics (Optional)</h2>
+        <div class="form-group">
+            <label for="topic_title_0">Topic Title</label>
+            <input type="text" id="topic_title_0" name="topics[0][title]">
+        </div>
+
+        <div class="form-group">
+            <label for="topic_description_0">Topic Description</label>
+            <textarea id="topic_description_0" name="topics[0][topic]"></textarea>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create Course</button>
+        </div>
+    </form>
 </div>
 </body>
 </html>

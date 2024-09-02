@@ -12,6 +12,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use JetBrains\PhpStorm\NoReturn;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tests\TestCase;
 
 class CourseTest extends TestCase
@@ -44,14 +45,14 @@ class CourseTest extends TestCase
                 ]
         ];
 
-        $response = $this->actingAs($user)->post('newCourses', $payload);
-        $response->assertStatus(Response::HTTP_CREATED);
+        $response = $this->actingAs($user)->post('new-course', $payload);
+        $response->assertStatus(Response::HTTP_FOUND);
     }
     public function test_view_courses()
     {
         $user = User::factory()->create(['is_admin' => true]);
         Course::factory()->create();
-        $response = $this->actingAs($user)->get('courses');
+        $response = $this->actingAs($user)->get('/');
         $response->assertStatus(Response::HTTP_OK);
     }
     public function test_delete_course()
@@ -60,15 +61,8 @@ class CourseTest extends TestCase
         $course = Course::factory()->create()->first();
         Topic::factory()->create();
 
-        $payload = [
-            'title' => $course->title,
-            'description' => $course->description,
-            'category' => $course->category,
-            'topics' => $course->topics->toArray(),
-        ];
-
-        $response = $this->actingAs($user)->post('deleteCourse/' . $course->id, $payload );
-        $response->assertStatus(Response::HTTP_OK);
+        $response = $this->actingAs($user)->delete('delete-course/' . $course->id);
+        $response->assertStatus(Response::HTTP_FOUND);
     }
 
     public function test_update_course()
@@ -86,8 +80,8 @@ class CourseTest extends TestCase
                 'topic' => 'A introdução ao HTML ensina os conceitos básicos da linguagem, como a estrutura de um documento e o uso de tags para criar páginas web.'
             ],
         ];
-        $response = $this->actingAs($user)->put('updateCourse/' . $course->id, $payload);
-        $response->assertStatus(Response::HTTP_OK);
+        $response = $this->actingAs($user)->put('update-course/' . $course->id, $payload);
+        $response->assertStatus(ResponseAlias::HTTP_FOUND);
         $this->assertDatabaseHas('courses', [
             'title' => $payload['title'],
             'description' => $payload['description'],
@@ -98,6 +92,35 @@ class CourseTest extends TestCase
            'topic' => $payload['topics']['topic'],
         ]);
     }
+
+    public function test_insert_topics_in_courses()
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        $course = Course::factory()->create()->first();
+        $user->courses()->attach($course->id);
+        $payload = [
+            'title' => 'aprenda tags html',
+            'topic' => 'aprenda tags html em uma semana',
+            'course_id' => $course->id,
+        ];
+
+        $response = $this->actingAs($user)->post('add-topic', $payload);
+        $response->assertStatus(ResponseAlias::HTTP_FOUND);
+    }
+
+    public function test_delete_topic()
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        $course = Course::factory()->create()->first();
+        $user->courses()->attach($course->id);
+        Topic::factory()->create();
+        $topic = Topic::query()->where('course_id', $course->id)->first();
+
+        $response = $this->actingAs($user)->delete('delete-topic/' . $topic->id);
+        $response->assertStatus(ResponseAlias::HTTP_FOUND);
+    }
+
+
 
 //    #[NoReturn] public function test123()
 //    {

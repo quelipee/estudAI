@@ -16,22 +16,42 @@ class AdminRouteServiceProvider extends RouteServiceProvider
     {
         Route::prefix('/')->middleware(['web','auth:sanctum', isAdminMiddleware::class])->group(function () {
 
-            Route::get('/',function(){
-                $courses = Course::all();
-                return view('index',compact('courses')); //TODO lembrar depois
-            })->name('index');
+            Route::get('/',function (){
+                $courses = \App\Models\Course::orderBy('created_at','DESC')->get();
 
-            Route::get('edit/{course}',function (Course $course){
+                return view('dashboard',compact('courses'));
+            })->name('dashboard');
+
+            Route::get('courses',[CourseController::class,'courses'])
+                ->name('index');
+
+            Route::get('edit-course/{course}',function (Course $course){
                 $categories = Category::cases();
                 return view('edit',compact('course','categories'));
             })->name('edit');
-            Route::put('updateCourse/{course}',[CourseController::class,'updateCourse'])
+
+            Route::put('update-course/{course}',[CourseController::class,'updateCourse'])
                 ->name('courses.update');
 
+            Route::get('new-course',function (){
+                $categories = Category::cases();
+                return view('create',compact('categories'));
+            })->name('course.create');
 
-            Route::post('newCourses', [CourseController::class,'newCourses'])->name('courses.create');
-            Route::get('courses',[CourseController::class,'courses'])->name('courses');
-            Route::post('deleteCourse/{course}',[CourseController::class,'deleteCourse'])->name('courses.destroy');
+            Route::post('new-course', [CourseController::class,'newCourses'])
+                ->name('course.store');
+
+            Route::post('add-topic',[CourseController::class,'insertTopicsInCourses'])
+                ->name('topics.store');
+
+            Route::delete('delete-topic/{topic}',[
+                CourseController::class,'deleteTopicsInCourses'])
+                ->name('topic.delete');
+
+            Route::delete('delete-course/{course}',[
+                CourseController::class,'deleteCourse'])
+                ->name('courses.destroy');
+
             Route::get('logout', [AdmController::class,'signOut'])
                 ->name('admin.logout');
         });

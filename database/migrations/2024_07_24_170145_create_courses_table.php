@@ -22,7 +22,7 @@ return new class extends Migration
 
         Schema::create('courseTopics',function (Blueprint $table) {
             $table->id();
-            $table->string('title')->unique();
+            $table->string('title');
             $table->text('topic')->nullable();
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();

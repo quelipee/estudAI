@@ -3,13 +3,21 @@
 namespace App\Domains\CourseDomain\CourseController;
 
 use App\Domains\CourseDomain\CourseDTO\newCourseDTO;
+use App\Domains\CourseDomain\CourseDTO\TopicDTO;
 use App\Domains\CourseDomain\CourseService\CourseService;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\CourseDomain\Requests\CourseRequest;
+use App\Domains\CourseDomain\Requests\TopicRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Topic;
 use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use JetBrains\PhpStorm\NoReturn;
 
 class CourseController extends Controller
@@ -18,43 +26,52 @@ class CourseController extends Controller
         protected CourseTopicsContracts $courseTopicsService,
     ){}
 
-    public function courses(): JsonResponse
+    public function courses(): View|Factory|Application
     {
-        $collections = $this->courseTopicsService->getAllCourses();
-        return response()->json([
-            'message' => 'OK',
-            'courses' => $collections
-        ]);
+        $courses = $this->courseTopicsService->getAllCourses();
+
+        return view('index',compact('courses'));
     }
 
     /**
      * @throws Exception
      */
-    public function newCourses(CourseRequest $request): JsonResponse
+    public function newCourses(CourseRequest $request): Application|Redirector|RedirectResponse
     {
-        $course = $this->courseTopicsService->
+        $this->courseTopicsService->
         addCourse(newCourseDTO::fromValidatedNewCourse($request));
 
-        return response()->json([
-            $course
-        ],
-        201);
+        return redirect(route('index'),302);
     }
 
-    public function deleteCourse(CourseRequest $request): JsonResponse
+    public function deleteCourse(Course $course): Application|Redirector|RedirectResponse
     {
-        $this->courseTopicsService->destroyCourse(newCourseDTO::fromValidatedNewCourse($request));
-        return response()->json([
-            'message' => 'Course deleted',
-        ],200);
+        $this->courseTopicsService
+            ->destroyCourse($course);
+
+        return redirect(route('index'),302);
     }
 
-    public function updateCourse(CourseRequest $request, int $id) : JsonResponse
+    public function updateCourse(CourseRequest $request, int $id) : Application|RedirectResponse|Redirector
     {
-        $courseUpdate = $this->courseTopicsService->updateCourse(newCourseDTO::fromValidatedNewCourse($request), $id);
-        return response()->json([
-            'message' => 'Course updated',
-            'course' => $courseUpdate
-        ],200);
+        $courseUpdate = $this->courseTopicsService
+            ->updateCourse(newCourseDTO::fromValidatedNewCourse($request), $id);
+
+        return redirect(
+            route('index',[
+                'course' => $courseUpdate
+            ]),302);
+    }
+
+    public function insertTopicsInCourses(TopicRequest $request): Application|Redirector|RedirectResponse
+    {
+        $this->courseTopicsService->addTopic(TopicDTO::fromValidatedNewTopics($request));
+        return redirect()->back()->with('status', 'Topic added successfully');
+    }
+
+    public function deleteTopicsInCourses(Topic $topic): Application|Redirector|RedirectResponse
+    {
+        $this->courseTopicsService->destroyTopic($topic);
+        return redirect()->back()->with('status', 'Topic deleted');
     }
 }

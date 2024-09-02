@@ -3,7 +3,9 @@
 namespace App\Domains\CourseDomain\CourseService;
 
 use App\Domains\CourseDomain\CourseDTO\newCourseDTO;
+use App\Domains\CourseDomain\CourseDTO\TopicDTO;
 use App\Domains\CourseDomain\Exceptions\CourseException;
+use App\Domains\CourseDomain\Exceptions\TopicException;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Models\Course;
 use App\Models\Topic;
@@ -28,8 +30,8 @@ class CourseService implements CourseTopicsContracts
             'category' => $dto->category,
         ]);
 
-        if ($dto->topics != null and $dto->topics != ['']) {
-            foreach ($dto->topics as $topic) {
+        foreach ($dto->topics as $topic) {
+            if ($topic['title'] != null or  $topic['topic'] != null) {
                 Topic::create([
                     'title' => $topic['title'],
                     'topic' => $topic['topic'],
@@ -60,15 +62,16 @@ class CourseService implements CourseTopicsContracts
     /**
      * @throws CourseException
      */
-    public function destroyCourse(newCourseDTO $dto) : bool
+    public function destroyCourse(Course $course) : bool
     {
-        if (!$this->existCourse($dto->title)){
-            throw CourseException::courseNotfound($dto->title);
+        if (!$this->existCourse($course->title)){
+            throw CourseException::courseNotfound($course->title);
         }
-        $course = Course::query()->where('title', $dto->title)->delete();
 
+        $course->delete();
+        Log::info('Course delete with success!!');
         if (!$course){
-            throw CourseException::courseNotDeleted($dto->title);
+            throw CourseException::courseNotDeleted($course->title);
         }
 
         return true;
@@ -102,8 +105,47 @@ class CourseService implements CourseTopicsContracts
         return Course::find($id);
     }
 
+    /**
+     * @throws TopicException
+     */
+    public function addTopic(TopicDTO $dto): Topic
+    {
+        $course = Course::query()
+            ->where('id', $dto->course_id)
+            ->first();
+        if (!$dto->course_id)
+        {
+            throw TopicException::topicNotFound($course->title);
+        }
+
+        $topic = new Topic([
+            'title' => $dto->title,
+            'topic' => $dto->topic,
+        ]);
+
+        $topic->course()->associate($course);
+        $topic->save();
+
+        return $topic;
+    }
+
     public function existCourse($title) : bool
     {
         return Course::where('title',$title)->exists();
+    }
+
+    /**
+     * @throws TopicException
+     */
+    public function destroyTopic(Topic $topic): bool
+    {
+        if (empty($topic->course_id))
+        {
+            throw TopicException::topicNotFound($topic->title);
+        }
+
+        $topic->delete();
+        Log::info('Topic delete with success!!');
+        return true;
     }
 }
