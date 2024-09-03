@@ -167,7 +167,7 @@
     <h1>Course Management</h1>
     <a href="{{ route('course.create') }}" class="btn btn-primary">Add New Course</a>
     <ul class="course-list">
-        @foreach ($courses as $course)
+        @foreach ($courses->sortByDesc('created_at') as $course)
 {{--            @dd($course->topics)--}}
             <li class="course-item" onclick="window.location.href='{{ route('edit', $course['id']) }}'">
                 <div class="course-item-content">

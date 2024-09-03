@@ -163,7 +163,7 @@
     <div class="card">
         <h3>Recent Activities</h3>
         <ul>
-            @foreach ($courses as $activity)
+            @foreach ($courses->sortByDesc('created_at') as $activity)
                 <li>
                     <span class="activity-title">{{ $activity->title }}</span>
                     <span class="activity-date">{{ $activity->created_at->format('d M Y H:i') }}</span>

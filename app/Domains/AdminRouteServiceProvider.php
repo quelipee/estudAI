@@ -17,7 +17,7 @@ class AdminRouteServiceProvider extends RouteServiceProvider
         Route::prefix('/')->middleware(['web','auth:sanctum', isAdminMiddleware::class])->group(function () {
 
             Route::get('/',function (){
-                $courses = \App\Models\Course::orderBy('created_at','DESC')->get();
+                $courses = \App\Models\Course::orderBy('updated_at','DESC')->get();
 
                 return view('dashboard',compact('courses'));
             })->name('dashboard');
