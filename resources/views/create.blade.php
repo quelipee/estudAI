@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use App\Domains\CourseDomain\Enums\Status; @endphp
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -181,6 +182,17 @@
             <select id="category" name="category" class="form-control" required>
                 @foreach ($categories as $category)
                     <option value="{{ $category->value }}" {{ old('category') === $category->value ? 'selected' : '' }}>
+                        {{ $category->value }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Status</label>
+            <select id="status" name="status" class="form-control" required>
+                @foreach (Status::cases() as $category)
+                    <option value="{{ $category->value }}" {{ old('status') === $category->value ? 'selected' : '' }}>
                         {{ $category->value }}
                     </option>
                 @endforeach

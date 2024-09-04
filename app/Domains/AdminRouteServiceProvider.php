@@ -12,14 +12,26 @@ use Illuminate\Support\Facades\Route;
 
 class AdminRouteServiceProvider extends RouteServiceProvider
 {
+    protected array $status = ['active' => 0, 'inactive' => 0, 'completed' => 0, 'cancelled' => 0, 'pending' => 0];
     public function map() : void
     {
         Route::prefix('/')->middleware(['web','auth:sanctum', isAdminMiddleware::class])->group(function () {
 
             Route::get('/',function (){
-                $courses = \App\Models\Course::orderBy('updated_at','DESC')->get();
+                $courses = Course::orderBy('updated_at','DESC')->get();
+                foreach ($courses as $course)
+                {
+                    match($course->status){
+                        'active' => $this->status['active']++,
+                        'inactive' => $this->status['inactive']++,
+                        'completed' => $this->status['completed']++,
+                        'cancelled' => $this->status['cancelled']++,
+                        'pending' => $this->status['pending']++,
+                        default => throw new \Exception('not status!!')
+                    };
+                }
 
-                return view('dashboard',compact('courses'));
+                return view('dashboard',compact('courses'), ['status' => $this->status]);
             })->name('dashboard');
 
             Route::get('courses',[CourseController::class,'courses'])

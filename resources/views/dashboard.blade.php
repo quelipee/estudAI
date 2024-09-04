@@ -156,8 +156,8 @@
     <div class="card">
         <h3>Course Summary</h3>
         <p>Total Courses: {{ count($courses) }}</p>
-        <p>Active Courses: {{ count($courses) }}</p> <!--$activeCourses-->
-        <p>Inactive Courses: {{ count($courses) }}</p> <!--$inactiveCourses-->
+        <p>Active Courses: {{ $status['active'] }}</p>
+        <p>Inactive Courses: {{ $status['inactive'] }}</p>
     </div>
 
     <div class="card">

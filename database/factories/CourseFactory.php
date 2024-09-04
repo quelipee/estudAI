@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domains\CourseDomain\Enums\Status;
 use App\Models\Course;
 use App\Models\Topic;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,6 +23,7 @@ class CourseFactory extends Factory
             'title' => fake()->text(10),
             'description' => fake()->text(20),
             'category' => fake()->text(10),
+            'status' => Status::Pending,
         ];
     }
 }

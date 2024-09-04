@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use App\Domains\CourseDomain\Enums\Status; @endphp
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -174,14 +175,27 @@
 
         <div class="form-group">
             <label for="description">Course Description</label>
-            <textarea id="description" name="description" required>{{ old('description', $course->description) }}</textarea>
+            <textarea id="description" name="description"
+                      required>{{ old('description', $course->description) }}</textarea>
         </div>
 
         <div class="form-group">
             <label for="category">Category</label>
             <select id="category" name="category" class="form-control" required>
                 @foreach ($categories as $category)
-                    <option value="{{ $category->value }}" {{ $course->category === $category->value ? 'selected' : '' }}>
+                    <option
+                        value="{{ $category->value }}" {{ $course->category === $category->value ? 'selected' : '' }}>
+                        {{ $category->value }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Status</label>
+            <select id="status" name="status" class="form-control" required>
+                @foreach (Status::cases() as $category)
+                    <option value="{{ $category->value }}" {{ $course->status === $category->value ? 'selected' : '' }}>
                         {{ $category->value }}
                     </option>
                 @endforeach
@@ -195,19 +209,19 @@
 
 
     @if(count($course->topics) != 0)
-    <h2 style="margin-bottom: 10px">Topics</h2>
-    @foreach ($course->topics as $topic)
-        <div class="topic-item">
-            <h3>{{ $topic->title }}</h3>
-            <p>{{ $topic->topic }}</p>
-            <a href="{{ route('index', $topic->id) }}" class="btn btn-primary">Edit Topic</a>
-            <form action="{{ route('topic.delete', $topic->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete Topic</button>
-            </form>
-        </div>
-    @endforeach
+        <h2 style="margin-bottom: 10px">Topics</h2>
+        @foreach ($course->topics as $topic)
+            <div class="topic-item">
+                <h3>{{ $topic->title }}</h3>
+                <p>{{ $topic->topic }}</p>
+                <a href="{{ route('index', $topic->id) }}" class="btn btn-primary">Edit Topic</a>
+                <form action="{{ route('topic.delete', $topic->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete Topic</button>
+                </form>
+            </div>
+        @endforeach
     @endif
 
     <h2>Add New Topic</h2>

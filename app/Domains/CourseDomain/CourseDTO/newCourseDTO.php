@@ -11,6 +11,7 @@ readonly class newCourseDTO
         public string $title,
         public string $description,
         public string $category,
+        public string $status,
         public ?array $topics,
     ){}
 
@@ -20,6 +21,7 @@ readonly class newCourseDTO
             title: $request->validated('title'),
             description: $request->validated('description'),
             category: $request->validated('category'),
+            status: $request->validated('status'),
             topics: $request->validated('topics'),
         );
     }

@@ -28,6 +28,7 @@ class CourseService implements CourseTopicsContracts
             'title' => $dto->title,
             'description' => $dto->description,
             'category' => $dto->category,
+            'status' => $dto->status,
         ]);
 
         foreach ($dto->topics as $topic) {
@@ -90,6 +91,7 @@ class CourseService implements CourseTopicsContracts
             'title' => $dto->title,
             'description' => $dto->description,
             'category' => $dto->category,
+            'status' => $dto->status,
             'updated_at' => now()
         ]);
 
