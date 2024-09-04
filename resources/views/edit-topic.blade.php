@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Edit Topics - Admin Panel</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         * {
@@ -91,52 +91,70 @@
             font-weight: 600;
         }
 
-        .card p {
-            margin-bottom: 10px;
-            color: #666;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .card ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .card ul li {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .card ul li:last-child {
-            border-bottom: none;
-        }
-
-        .card ul li .activity-title {
+        .form-group label {
             font-weight: 500;
+            color: #333;
+            display: block;
         }
 
-        .card ul li .activity-date {
-            font-size: 14px;
-            color: #888;
+        .form-control {
+            padding: 8px 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 5px;
         }
 
-        .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
+        .btn-primary, .btn-danger {
             padding: 10px 20px;
             border-radius: 5px;
             display: inline-block;
             font-weight: 500;
             transition: background-color 0.3s ease;
+            text-align: center;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
         }
 
         .btn-primary:hover {
             background-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .topic-item {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .topic-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px; /* Espaçamento entre os botões */
+        }
+
+        .add-topic {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -151,44 +169,33 @@
     </ul>
 </div>
 <div class="content">
-    <h1>Dashboard</h1>
+    <h1>Edit Topics</h1>
 
-    <div class="card">
-        <h3>Course Summary</h3>
-        <p>Total Courses: {{ count($courses) }}</p>
-        <p>Active Courses: {{ $status['active'] }}</p>
-        <p>Inactive Courses: {{ $status['inactive'] }}</p>
-    </div>
+    @if(count($course->topics) > 0)
+        <h2 style="margin-bottom: 10px">Topics</h2>
 
-    <div class="card">
-        <h3>Recent Activities</h3>
-        <ul>
-            @foreach ($courses->sortByDesc('created_at') as $activity)
-                <li>
-                    <span class="activity-title">{{ $activity->title }}</span>
-                    <span class="activity-date">{{ $activity->created_at->format('d M Y H:i') }}</span>
-                </li>
-            @endforeach
-        </ul>
-    </div>
+            <div class="card topic-item">
+                <form action="{{ route('topic.update', ['topic' => $topic->id, 'course_id' => $course->id]) }}" method="POST" style="margin-bottom: 10px;">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="title_{{ $topic->id }}">Title</label>
+                        <input type="text" id="title_{{ $topic->id }}" name="title" class="form-control" value="{{ $topic->title }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="topic_{{ $topic->id }}">Description</label>
+                        <textarea id="topic_{{ $topic->id }}" name="topic" class="form-control" required>{{ $topic->topic }}</textarea>
+                    </div>
+                    <div class="topic-actions">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
-    <div class="card">
-        <h3>Recent Updates</h3>
-        <ul>
-            @foreach ($courses as $update)
-                <li>
-                    <span class="activity-title">{{ $update->title }}</span>
-                    <span class="activity-date">{{ $update->updated_at->format('d M Y H:i') }}
-                </li>
-            @endforeach
-        </ul>
-    </div>
+    @else
+        <p>No topics available.</p>
+    @endif
 
-    <div class="card">
-        <h3>Quick Links</h3>
-        <a href="{{ route('course.create') }}" class="btn btn-primary">Add New Course</a>
-        <a href="{{ route('index') }}" class="btn btn-primary">View All Courses</a>
-    </div>
 </div>
 </body>
 </html>

@@ -7,6 +7,7 @@ use App\Domains\CourseDomain\CourseController\CourseController;
 use App\Domains\CourseDomain\Enums\Category;
 use App\Http\Middleware\isAdminMiddleware;
 use App\Models\Course;
+use App\Models\Topic;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,16 @@ class AdminRouteServiceProvider extends RouteServiceProvider
             Route::post('add-topic',[CourseController::class,'insertTopicsInCourses'])
                 ->name('topics.store');
 
+            Route::get('edit-topic/{topic}',function (Topic $topic){
+                $course = Course::query()
+                    ->where('id',$topic->course_id)->first();
+
+                return view('edit-topic',compact('topic','course'));
+            })->name('topic.edit');
+
+            Route::put('update-topic/{topic}',[CourseController::class,'updateTopicsInCourses'])
+                ->name('topic.update');
+
             Route::delete('delete-topic/{topic}',[
                 CourseController::class,'deleteTopicsInCourses'])
                 ->name('topic.delete');
@@ -66,6 +77,10 @@ class AdminRouteServiceProvider extends RouteServiceProvider
 
             Route::get('logout', [AdmController::class,'signOut'])
                 ->name('admin.logout');
+
+            Route::get('setting',function (){
+                return view('setting');
+            })->name('settings');
         });
 
         Route::prefix('/')->middleware(['web','guest:sanctum'])->group(function () {

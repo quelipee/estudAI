@@ -214,7 +214,7 @@
             <div class="topic-item">
                 <h3>{{ $topic->title }}</h3>
                 <p>{{ $topic->topic }}</p>
-                <a href="{{ route('index', $topic->id) }}" class="btn btn-primary">Edit Topic</a>
+                <a href="{{ route('topic.edit', $topic->id) }}" class="btn btn-primary">Edit Topic</a>
                 <form action="{{ route('topic.delete', $topic->id) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')

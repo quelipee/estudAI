@@ -18,4 +18,6 @@ interface CourseTopicsContracts
     public function addTopic(TopicDTO $dto) : Topic;
 
     public function destroyTopic(Topic $topic) : bool;
+
+    public function updateTopic(TopicDTO $dto,Topic $topic) : Topic;
 }

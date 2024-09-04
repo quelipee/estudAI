@@ -150,4 +150,15 @@ class CourseService implements CourseTopicsContracts
         Log::info('Topic delete with success!!');
         return true;
     }
+
+    public function updateTopic(TopicDTO $dto,Topic $topic): Topic
+    {
+        $topic->fill([
+            'topic' => $dto->topic,
+            'title' => $dto->title,
+            'course_id' => $dto->course_id,
+            'updated_at' => now(),
+        ])->save();
+        return $topic;
+    }
 }

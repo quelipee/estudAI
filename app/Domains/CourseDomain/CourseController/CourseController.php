@@ -74,4 +74,10 @@ class CourseController extends Controller
         $this->courseTopicsService->destroyTopic($topic);
         return redirect()->back()->with('status', 'Topic deleted');
     }
+
+    public function updateTopicsInCourses(TopicRequest $request,Topic $topic): RedirectResponse
+    {
+        $this->courseTopicsService->updateTopic(TopicDTO::fromValidatedNewTopics($request),$topic);
+        return redirect()->route('edit',$topic->course_id);
+    }
 }

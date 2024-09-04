@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Domains\CourseDomain\Enums\Category;
+use App\Domains\CourseDomain\Enums\Status;
 use App\Models\Course;
 use App\Models\Topic;
 use App\Models\User;
@@ -69,16 +70,12 @@ class CourseTest extends TestCase
     {
         $user = User::factory()->create(['is_admin' => true]);
         $course = Course::factory()->create(['id' => 11])->first();
-        Topic::factory()->create();
 
         $payload = [
             'title' => 'curso de html iniciante',
             'description' => 'Aprenda os fundamentos da construção de páginas web, criando e estruturando conteúdo com HTML de forma simples e prática, ideal para quem está começando no mundo do desenvolvimento web.',
             'category' => Category::SoftwareDevelopment->value,
-            'topics' => [
-                'title' => 'Introdução ao HTML',
-                'topic' => 'A introdução ao HTML ensina os conceitos básicos da linguagem, como a estrutura de um documento e o uso de tags para criar páginas web.'
-            ],
+            'status' => Status::Completed->value,
         ];
         $response = $this->actingAs($user)->put('update-course/' . $course->id, $payload);
         $response->assertStatus(ResponseAlias::HTTP_FOUND);
@@ -86,10 +83,6 @@ class CourseTest extends TestCase
             'title' => $payload['title'],
             'description' => $payload['description'],
             'category' => $payload['category']
-        ]);
-        $this->assertDatabaseHas('courseTopics',[
-           'title' => $payload['topics']['title'],
-           'topic' => $payload['topics']['topic'],
         ]);
     }
 
@@ -120,7 +113,25 @@ class CourseTest extends TestCase
         $response->assertStatus(ResponseAlias::HTTP_FOUND);
     }
 
+    public function test_update_topic()
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+        $course = Course::factory()->create()->first();
+        $user->courses()->attach($course->id);
+        $topic = Topic::factory()->create(['title' => 'python'])->first();
+        $payload = [
+            'title' => 'tags html',
+            'topic' => 'tags html em uma semana',
+            'course_id' => $course->id
+        ];
 
+        $response = $this->actingAs($user)->put('update-topic/' . $topic->id, $payload);
+        $response->assertStatus(ResponseAlias::HTTP_FOUND);
+        $this->assertDatabaseHas('courseTopics', [
+            'title' => $payload['title'],
+            'topic' => $payload['topic'],
+        ]);
+    }
 
 //    #[NoReturn] public function test123()
 //    {

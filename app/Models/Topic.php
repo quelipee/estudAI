@@ -17,7 +17,7 @@ class Topic extends Model
     ];
 
     protected $casts = [
-        'topic' => 'array'
+        'topic' => 'string'
     ];
 
     public function course(): BelongsTo

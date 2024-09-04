@@ -1,7 +1,6 @@
 <?php
 
 use App\Domains\ChatDomain\Controllers\ChatController;
-use App\Domains\CourseDomain\API\RequestsAPI;
 use App\Domains\UserDomain\UserController\UserController;
 use App\Http\Middleware\EnsureHasCourseMiddleware;
 use App\Http\Middleware\PreventDuplicateEnrollment;

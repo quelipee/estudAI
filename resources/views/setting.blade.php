@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Settings - Admin Panel</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         * {
@@ -115,11 +115,11 @@
             border-bottom: none;
         }
 
-        .card ul li .activity-title {
+        .card ul li .setting-title {
             font-weight: 500;
         }
 
-        .card ul li .activity-date {
+        .card ul li .setting-control {
             font-size: 14px;
             color: #888;
         }
@@ -138,6 +138,25 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
+
+        .form-control {
+            padding: 8px 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -151,43 +170,69 @@
     </ul>
 </div>
 <div class="content">
-    <h1>Dashboard</h1>
+    <h1>Settings</h1>
 
     <div class="card">
-        <h3>Course Summary</h3>
-        <p>Total Courses: {{ count($courses) }}</p>
-        <p>Active Courses: {{ $status['active'] }}</p>
-        <p>Inactive Courses: {{ $status['inactive'] }}</p>
+        <h3>Account Settings</h3>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" value="">
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" value="">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control">
+        </div>
+        <button class="btn btn-primary">Save Changes</button>
     </div>
 
     <div class="card">
-        <h3>Recent Activities</h3>
+        <h3>Notification Settings</h3>
         <ul>
-            @foreach ($courses->sortByDesc('created_at') as $activity)
-                <li>
-                    <span class="activity-title">{{ $activity->title }}</span>
-                    <span class="activity-date">{{ $activity->created_at->format('d M Y H:i') }}</span>
-                </li>
-            @endforeach
+            <li>
+                <span class="setting-title">Email Notifications</span>
+                <span class="setting-control">
+                    <input type="checkbox" id="email_notifications" >
+                </span>
+            </li>
+            <li>
+                <span class="setting-title">SMS Notifications</span>
+                <span class="setting-control">
+                    <input type="checkbox" id="sms_notifications" >
+                </span>
+            </li>
+            <li>
+                <span class="setting-title">Push Notifications</span>
+                <span class="setting-control">
+                    <input type="checkbox" id="push_notifications" >
+                </span>
+            </li>
         </ul>
+        <button class="btn btn-primary">Save Changes</button>
     </div>
 
     <div class="card">
-        <h3>Recent Updates</h3>
-        <ul>
-            @foreach ($courses as $update)
-                <li>
-                    <span class="activity-title">{{ $update->title }}</span>
-                    <span class="activity-date">{{ $update->updated_at->format('d M Y H:i') }}
-                </li>
-            @endforeach
-        </ul>
-    </div>
-
-    <div class="card">
-        <h3>Quick Links</h3>
-        <a href="{{ route('course.create') }}" class="btn btn-primary">Add New Course</a>
-        <a href="{{ route('index') }}" class="btn btn-primary">View All Courses</a>
+        <h3>System Settings</h3>
+        <div class="form-group">
+            <label for="timezone">Timezone</label>
+            <select id="timezone" class="form-control">
+{{--                @foreach ($timezones as $timezone)--}}
+{{--                    <option value="{{ $timezone }}" {{ $settings->timezone == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>--}}
+{{--                @endforeach--}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="language">Language</label>
+            <select id="language" class="form-control">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="pt">Portuguese</option>
+            </select>
+        </div>
+        <button class="btn btn-primary">Save Changes</button>
     </div>
 </div>
 </body>
