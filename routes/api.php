@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureHasCourseMiddleware;
 use App\Http\Middleware\PreventDuplicateEnrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\Course;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -14,6 +15,13 @@ Route::get('/user', function (Request $request) {
 Route::middleware(['guest:sanctum'])->group(function () {
     Route::post('register', [UserController::class,'signUp'])->name('signUp');
     Route::post('login', [UserController::class,'signIn'])->name('signIn');
+    Route::get('courses',function(){
+        //TODO ADJUSTS AFTER
+        $courses = Course::all();
+        return response()->json(
+            ['courses' => $courses]
+        );
+    });
 });
 
 
