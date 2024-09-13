@@ -7,6 +7,7 @@ use App\Http\Middleware\PreventDuplicateEnrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Course;
+use App\Models\Topic;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -32,9 +33,25 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('leave-course/{course}',[UserController::class,'leaveCourse'])->name('leave-course');
 
     Route::get('chat/{course}/topic/{topic}/message',[ChatController::class,'chatTopic'])
-        ->name('sendChat')
-        ->middleware(EnsureHasCourseMiddleware::class);
+        ->name('sendChat');
+        // ->middleware(EnsureHasCourseMiddleware::class);
 
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });
 
+Route::post('fetchTopic',function(Request $request){
+    $topic = Topic::query()->where('id',$request->id)->first();
+    return response()->json([
+        'topic' => $topic
+    ]);
+})->name('topic_id');
+
+//TODO ADJUSTS LATER
+Route::get('topics/{id}',function($id){
+    $topics = Topic::query()->where('course_id',$id)->get();
+    return $topics;
+})->name('courses_topics');
+
+Route::get('findCourse/{id}',function($id){
+    return Course::query()->where('id',$id)->first();
+})->name('find_course');
