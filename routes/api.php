@@ -39,18 +39,16 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });
 
-Route::post('fetchTopic',function(Request $request){
-    $topic = Topic::query()->where('id',$request->id)->first();
-    return response()->json([
-        'topic' => $topic
-    ]);
-})->name('topic_id');
-
 //TODO ADJUSTS LATER
 Route::get('topics/{id}',function($id){
     $topics = Topic::query()->where('course_id',$id)->get();
     return $topics;
 })->name('courses_topics');
+
+Route::get('findTopic/{id}',function ($id){
+   $topic = Topic::query()->where('id',$id)->first();
+   return $topic;
+});
 
 Route::get('findCourse/{id}',function($id){
     return Course::query()->where('id',$id)->first();

@@ -7,10 +7,13 @@ use App\Domains\CourseDomain\CourseDTO\TopicDTO;
 use App\Domains\CourseDomain\Exceptions\CourseException;
 use App\Domains\CourseDomain\Exceptions\TopicException;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
+use App\Events\CourseEvent;
+use App\Events\TopicEvent;
 use App\Models\Course;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
 class CourseService implements CourseTopicsContracts
@@ -41,6 +44,7 @@ class CourseService implements CourseTopicsContracts
             }
         }
 
+        Event::dispatch(new CourseEvent(Course::all()->toArray()));
         return $course;
     }
 
@@ -56,7 +60,6 @@ class CourseService implements CourseTopicsContracts
                 'created_up' => $course->created_up,
             ];
         });
-
         return collect($courses);
     }
 
@@ -74,7 +77,7 @@ class CourseService implements CourseTopicsContracts
         if (!$course){
             throw CourseException::courseNotDeleted($course->title);
         }
-
+        Event::dispatch(new CourseEvent(Course::all()->toArray()));
         return true;
     }
 
@@ -104,6 +107,10 @@ class CourseService implements CourseTopicsContracts
         }
 
         Log::info('Course update with success!!');
+        Event::dispatch(new CourseEvent(
+            Course::all()->toArray()
+        ));
+
         return Course::find($id);
     }
 
@@ -127,7 +134,9 @@ class CourseService implements CourseTopicsContracts
 
         $topic->course()->associate($course);
         $topic->save();
-
+        Event::dispatch(new TopicEvent(Topic::query()
+            ->where('course_id',$dto->course_id)
+            ->get()->toArray()));
         return $topic;
     }
 
@@ -145,9 +154,13 @@ class CourseService implements CourseTopicsContracts
         {
             throw TopicException::topicNotFound($topic->title);
         }
-
+        $courseId = $topic->course_id;
         $topic->delete();
         Log::info('Topic delete with success!!');
+        Event::dispatch(new TopicEvent(
+            Topic::query()->where('course_id',$courseId)
+                ->get()->toArray()
+        ));
         return true;
     }
 
@@ -159,6 +172,9 @@ class CourseService implements CourseTopicsContracts
             'course_id' => $dto->course_id,
             'updated_at' => now(),
         ])->save();
+        Event::dispatch(new TopicEvent(
+            Topic::query()->where('course_id',$dto->course_id)
+                ->get()->toArray()));
         return $topic;
     }
 }
