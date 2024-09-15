@@ -7,7 +7,9 @@ use App\Domains\CourseDomain\CourseController\CourseController;
 use App\Domains\CourseDomain\Enums\Category;
 use App\Http\Middleware\isAdminMiddleware;
 use App\Models\Course;
+use App\Models\MessageHistory;
 use App\Models\Topic;
+use GeminiAPI\Enums\Role;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -61,7 +63,10 @@ class AdminRouteServiceProvider extends RouteServiceProvider
                 $course = Course::query()
                     ->where('id',$topic->course_id)->first();
 
-                return view('edit-topic',compact('topic','course'));
+                $roleUserId = MessageHistory::query()->where('course_id', $course->id)->where('topic_id',$topic->id)->where('role',Role::User->name)->first();
+                $roleModelId = MessageHistory::query()->where('course_id', $course->id)->where('topic_id',$topic->id)->where('role',Role::Model->name)->first();
+
+                return view('edit-topic',['course' => $course, 'topic' => $topic, 'roleUserId' => $roleUserId->id, 'roleModelId' => $roleModelId->id]);
             })->name('topic.edit');
 
             Route::put('update-topic/{topic}',[CourseController::class,'updateTopicsInCourses'])

@@ -8,6 +8,7 @@ use App\Domains\CourseDomain\CourseService\CourseService;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\CourseDomain\Requests\CourseRequest;
 use App\Domains\CourseDomain\Requests\TopicRequest;
+use App\Domains\CourseDomain\Requests\TopicRequestUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Topic;
@@ -17,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -75,9 +77,9 @@ class CourseController extends Controller
         return redirect()->back()->with('status', 'Topic deleted');
     }
 
-    public function updateTopicsInCourses(TopicRequest $request,Topic $topic): RedirectResponse
+    public function updateTopicsInCourses(TopicRequestUpdated $request,Topic $topic): RedirectResponse
     {
-        $this->courseTopicsService->updateTopic(TopicDTO::fromValidatedNewTopics($request),$topic);
+        $this->courseTopicsService->updateTopic(TopicDTO::fromValidatedUpdatedTopics($request),$topic);
         return redirect()->route('edit',$topic->course_id);
     }
 }

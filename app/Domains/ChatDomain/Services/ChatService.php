@@ -6,6 +6,7 @@ use App\Domains\ChatDomain\ChatContracts;
 use App\Models\Course;
 use App\Models\MessageHistory;
 use App\Models\Topic;
+use GeminiAPI\ChatSession;
 use GeminiAPI\Client;
 use GeminiAPI\Enums\Role;
 use GeminiAPI\Resources\Content;
@@ -16,8 +17,8 @@ use Psr\Http\Client\ClientExceptionInterface;
 
 class ChatService implements ChatContracts
 {
-    private $client;
-    private $chat;
+    private Client $client;
+    private ChatSession $chat;
     public function __construct(
         public string $apiKey,
     ){
@@ -35,7 +36,7 @@ class ChatService implements ChatContracts
             ->where('id',$topic)
             ->first();
 
-        $text = 'me ensine sobre este topico: ' . $topic->title . 'essa é a sua descrição: ' . $topic->description;
+        $text = 'me ensine sobre este topico: ' . $topic->title . ' essa é a sua descrição: ' . $topic->description;
 
         $user = new MessageHistory([
             'message' => $text,
@@ -62,6 +63,37 @@ class ChatService implements ChatContracts
         return $response;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
+    public function updated_topic_message(Course $course, int $topic, string $roleModelId, string $roleUserId, string $message, string $description): GenerateContentResponse
+    {
+        $topic =Topic::query()
+            ->where('course_id',$course->id)
+            ->where('id',$topic)
+            ->first();
+
+        $text = 'me ensine sobre este topico: ' . $message . ' essa é a sua descrição: ' . $description;
+
+        MessageHistory::query()->where('id', $roleUserId )->update([
+            'message' => $text,
+            'role' => Role::User->name,
+        ]);
+
+        $history = $this->retrieveConversationLog($course, $topic);
+        $message = new TextPart($text);
+        $response = $this->chat->withHistory($history)->sendMessage($message);
+        MessageHistory::query()->where('id', $roleModelId)->update([
+            'message' => $response->text(),
+            'role' => Role::Model->name,
+        ]);
+
+        return $response;
+    }
+    public function fetch_message_IA($course, int $messageId): GenerateContentResponse
+    {
+        // TODO: Implement fetch_message_IA() method.
+    }
     public function retrieveConversationLog(Course $course, Topic $topic): array
     {
         $history = [];

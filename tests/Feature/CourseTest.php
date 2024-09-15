@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Domains\CourseDomain\Enums\Category;
 use App\Domains\CourseDomain\Enums\Status;
 use App\Models\Course;
+use App\Models\MessageHistory;
 use App\Models\Topic;
 use App\Models\User;
+use GeminiAPI\Enums\Role;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -119,10 +121,25 @@ class CourseTest extends TestCase
         $course = Course::factory()->create()->first();
         $user->courses()->attach($course->id);
         $topic = Topic::factory()->create(['title' => 'python'])->first();
+        $messageUser = MessageHistory::factory()->create([
+            'message' => 'league of legends',
+            'role' => Role::User->name
+        ])->first();
+        $messageModel = MessageHistory::factory()->create([
+            'id' => fake()->uuid(),
+            'message' => fake()->realText(),
+            'role' => Role::Model->name
+        ])->first();
+
+        var_dump($messageUser->message);
+        var_dump($messageModel->message);
         $payload = [
             'title' => 'tags html',
             'topic' => 'tags html em uma semana',
-            'course_id' => $course->id
+            'course_id' => $course->id,
+            'roleUserId' => $messageUser->id,
+            'roleModelId' => $messageModel->id,
+            'message' => 'html'
         ];
 
         $response = $this->actingAs($user)->put('update-topic/' . $topic->id, $payload);

@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Domains\AdmDomains\AuthManagerContract;
 use App\Domains\AdmDomains\ManagerException;
 use App\Domains\AdmDomains\Services\AuthManagerService;
+use App\Domains\ChatDomain\ChatContracts;
+use App\Domains\ChatDomain\Services\ChatService;
 use App\Domains\CourseDomain\CourseService\CourseService;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\UserDomain\AuthServiceContract;
@@ -31,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
             $config = $app['config']['usertype.provider_default'];
             return match ($config){
                 'user' => new UserService(),
-                'admin' => new CourseService(),
+                'admin' => new CourseService(new ChatService(env('GEMINI_API_KEY'))),
                 default => throw ManagerException::managerNotFound()
             };
         });

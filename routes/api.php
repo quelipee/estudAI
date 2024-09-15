@@ -33,8 +33,8 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('leave-course/{course}',[UserController::class,'leaveCourse'])->name('leave-course');
 
     Route::get('chat/{course}/topic/{topic}/message',[ChatController::class,'chatTopic'])
-        ->name('sendChat');
-        // ->middleware(EnsureHasCourseMiddleware::class);
+        ->name('sendChat')
+         ->middleware(EnsureHasCourseMiddleware::class);
 
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 });

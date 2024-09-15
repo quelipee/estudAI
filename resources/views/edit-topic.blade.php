@@ -175,7 +175,8 @@
         <h2 style="margin-bottom: 10px">Topics</h2>
 
             <div class="card topic-item">
-                <form action="{{ route('topic.update', ['topic' => $topic->id, 'course_id' => $course->id]) }}" method="POST" style="margin-bottom: 10px;">
+                <form action="{{ route('topic.update', ['topic' => $topic->id,'roleUserId' => $roleUserId, 'roleModelId' => $roleModelId, 'course_id' => $course->id]) }}"
+                      method="POST" style="margin-bottom: 10px;">
                     @csrf
                     @method('PUT')
                     <div class="form-group">

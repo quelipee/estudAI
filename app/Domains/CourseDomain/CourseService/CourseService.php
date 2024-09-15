@@ -2,6 +2,7 @@
 
 namespace App\Domains\CourseDomain\CourseService;
 
+use App\Domains\ChatDomain\ChatContracts;
 use App\Domains\CourseDomain\CourseDTO\newCourseDTO;
 use App\Domains\CourseDomain\CourseDTO\TopicDTO;
 use App\Domains\CourseDomain\Exceptions\CourseException;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Log;
 
 class CourseService implements CourseTopicsContracts
 {
+    public function __construct(protected ChatContracts $chatContracts){}
+
     /**
      * @throws Exception
      */
@@ -134,6 +137,9 @@ class CourseService implements CourseTopicsContracts
 
         $topic->course()->associate($course);
         $topic->save();
+
+        $this->chatContracts->receive_topic($course,$topic->id);
+
         Event::dispatch(new TopicEvent(Topic::query()
             ->where('course_id',$dto->course_id)
             ->get()->toArray()));
@@ -172,6 +178,11 @@ class CourseService implements CourseTopicsContracts
             'course_id' => $dto->course_id,
             'updated_at' => now(),
         ])->save();
+        $course = Course::query()->where('id',$dto->course_id)->first();
+        $this->chatContracts->updated_topic_message(
+            $course,$topic->id,$dto->roleModelId,
+            $dto->roleUserId, $dto->title, $dto->topic);
+
         Event::dispatch(new TopicEvent(
             Topic::query()->where('course_id',$dto->course_id)
                 ->get()->toArray()));
