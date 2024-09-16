@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\MessageHistory;
 use GeminiAPI\Responses\GenerateContentResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
@@ -15,11 +16,11 @@ class ChatController extends Controller
         protected ChatContracts $chatContracts
     ){}
 
-    public function chatTopic(Course $course, int $topic): JsonResponse
+    public function chatTopic(Course $course, int $topic, Request $request): JsonResponse
     {
-        $response =  $this->chatContracts->receive_topic($course,$topic);
+        $response =  $this->chatContracts->add_message_for_chat_histories($course,$topic, $request->action);
         return response()->json([
-            'message' => $response->text(),
+            'message' => $response,
         ],200);
     }
 }

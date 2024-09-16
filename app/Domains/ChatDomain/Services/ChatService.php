@@ -3,6 +3,8 @@
 namespace App\Domains\ChatDomain\Services;
 
 use App\Domains\ChatDomain\ChatContracts;
+use App\Events\MessageEvent;
+use App\Events\MessageUpdatedEvent;
 use App\Models\Course;
 use App\Models\MessageHistory;
 use App\Models\Topic;
@@ -13,6 +15,7 @@ use GeminiAPI\Resources\Content;
 use GeminiAPI\Resources\Parts\TextPart;
 use GeminiAPI\Responses\GenerateContentResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Psr\Http\Client\ClientExceptionInterface;
 
 class ChatService implements ChatContracts
@@ -60,6 +63,7 @@ class ChatService implements ChatContracts
         $model->topic()->associate($topic);
         $model->save();
 
+//        Event::dispatch(new MessageEvent($response->text()));
         return $response;
     }
 
@@ -87,8 +91,47 @@ class ChatService implements ChatContracts
             'message' => $response->text(),
             'role' => Role::Model->name,
         ]);
-
+        $userMessage = MessageHistory::query()
+            ->where('id', $roleModelId)->first();
+        Event::dispatch(new MessageUpdatedEvent($userMessage->toArray()));
         return $response;
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     */
+    public function add_message_for_chat_histories(Course $course, int $topic, string $type)
+    {
+        $topic = Topic::query()->where('course_id',$course->id)
+            ->where('id',$topic)->first();
+
+        $text = $type . ' sobre o topico ' . $topic->title;
+
+        $message = new MessageHistory([
+            'message' => $text,
+            'role' => Role::User->name,
+        ]);
+        $message->user()->associate(Auth::id());
+        $message->course()->associate($course);
+        $message->topic()->associate($topic);
+        $message->save();
+
+        $history = $this->retrieveConversationLog($course, $topic);
+         $textForIA = new TextPart($text);
+        $response = $this->chat->withHistory($history)->sendMessage($textForIA);
+
+        $model = new MessageHistory([
+            'message' => $response->text(),
+            'role' => Role::Model->name,
+        ]);
+        $model->user()->associate(Auth::id());
+        $model->course()->associate($course);
+        $model->topic()->associate($topic);
+        $model->save();
+
+        $res = MessageHistory::query()->where('id',$model->id)->first();
+        Event::dispatch(new MessageEvent($res->toArray()));
+        return $res;
     }
     public function fetch_message_IA($course, int $messageId): GenerateContentResponse
     {
