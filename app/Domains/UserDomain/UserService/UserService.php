@@ -7,10 +7,12 @@ use App\Domains\UserDomain\UserDTO\SignInDTO;
 use App\Domains\UserDomain\UserDTO\SignUpDTO;
 use App\Domains\UserDomain\UserDTO\UserDTO;
 use App\Domains\UserDomain\UserException\UserException;
+use App\Events\YourCourseEvent;
 use App\Models\Course;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements AuthServiceContract
@@ -68,9 +70,9 @@ class UserService implements AuthServiceContract
     /**
      * @throws Exception
      */
-    public function newJoinCourse(Course $course, UserDTO $dto) : User
+    public function newJoinCourse(Course $course)
     {
-        $user = User::find($dto->id);
+        $user = Auth::user();
         if (!$user){
             throw UserException::userNotFound();
         }
@@ -78,12 +80,13 @@ class UserService implements AuthServiceContract
         if (!$course){
             throw UserException::courseNotFound();
         }
-
-        if ($user->courses()->exists($course)){
+        $exist = $user->courses()->where('course_id', $course->id)->exists();
+        if ($exist) {
             throw UserException::userAlreadyEnrolled();
         }
 
         $user->courses()->attach($course->id);
+        Event::dispatch(new YourCourseEvent($user->courses->toArray()));
         return $user->load('courses');
     }
 

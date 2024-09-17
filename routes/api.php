@@ -31,7 +31,7 @@ Route::middleware(['guest:sanctum'])->group(function () {
 Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [UserController::class,'signOut'])->name('signOut');
     //TODO NOT APPLY
-    Route::post('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course')
+    Route::get('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course')
         ->middleware(PreventDuplicateEnrollment::class);
     //TODO NOT APLLY
     Route::post('leave-course/{course}',[UserController::class,'leaveCourse'])->name('leave-course');
@@ -48,6 +48,13 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
                 ->where('topic_id',$id)->where('user_id',$user->id);
         }]);
     });
+
+    Route::get('your_courses',function(){
+        $user = Auth::user();
+        return response()->json([
+            'courses' => $user->courses,
+        ]);
+    })->name('yourCourses');
 });
 
 //TODO ADJUSTS LATER

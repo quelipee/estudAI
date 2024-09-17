@@ -14,7 +14,7 @@ interface AuthServiceContract
     public function serviceSignUp(SignUpDTO $dto) : User;
     public function serviceSignIn(SignInDTO $dto) : array;
     public function serviceSignOut() : bool;
-    public function newJoinCourse(Course $course, UserDTO $dto) : User;
+    public function newJoinCourse(Course $course) ;
     public function deleteUserCourse(Course $course, UserDTO $dto) : bool;
     public function getUserProfile() : User;
 }

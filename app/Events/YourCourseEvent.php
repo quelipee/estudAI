@@ -11,17 +11,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CourseEvent implements ShouldBroadcast
+class YourCourseEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(protected $course)
-    {
-        //
-    }
+    public function __construct(protected $courses){}
 
     /**
      * Get the channels the event should broadcast on.
@@ -31,17 +28,16 @@ class CourseEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('courses'),
+            new Channel('YourCourses'),
         ];
     }
-
     public function broadcastAs(): string
     {
-        return 'CoursesEvent';
+        return 'YourCoursesEvent';
     }
 
     public function broadcastWith()
     {
-        return $this->course;
+        return $this->courses;
     }
 }

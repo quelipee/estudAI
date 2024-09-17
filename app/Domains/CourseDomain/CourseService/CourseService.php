@@ -10,10 +10,12 @@ use App\Domains\CourseDomain\Exceptions\TopicException;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Events\CourseEvent;
 use App\Events\TopicEvent;
+use App\Events\YourCourseEvent;
 use App\Models\Course;
 use App\Models\Topic;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
@@ -81,6 +83,8 @@ class CourseService implements CourseTopicsContracts
             throw CourseException::courseNotDeleted($course->title);
         }
         Event::dispatch(new CourseEvent(Course::all()->toArray()));
+        $user = Auth::user();
+        Event::dispatch(new YourCourseEvent($user->courses->toArray()));
         return true;
     }
 
@@ -113,7 +117,8 @@ class CourseService implements CourseTopicsContracts
         Event::dispatch(new CourseEvent(
             Course::all()->toArray()
         ));
-
+        $user = Auth::user();
+        Event::dispatch(new YourCourseEvent($user->courses->toArray()));
         return Course::find($id);
     }
 

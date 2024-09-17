@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase;
+//    use RefreshDatabase;
 
     /**
      * A basic feature test example.
@@ -67,7 +67,7 @@ class UserTest extends TestCase
             'category' => 'programação'
         ]);
 
-        $response = $this->actingAs($user)->post('api/app/join-course/'.$course->id, $user->toArray());
+        $response = $this->actingAs($user)->post('api/app/join-course/'.$course->id);
         $response->assertStatus(Response::HTTP_CREATED);
     }
 
@@ -122,6 +122,14 @@ class UserTest extends TestCase
         $user = User::factory()->create(['is_admin' => true]);
 
         $response = $this->actingAs($user)->get('/');
+        $response->assertStatus(Response::HTTP_OK);
+    }
+
+    public function test_user_your_courses()
+    {
+        $user = User::find(101);
+
+        $response = $this->actingAs($user)->get('api/app/your_courses');
         $response->assertStatus(Response::HTTP_OK);
     }
 }

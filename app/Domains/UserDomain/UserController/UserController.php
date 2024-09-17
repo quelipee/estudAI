@@ -70,10 +70,10 @@ class UserController extends Controller
     /**
      * @throws Exception
      */
-    public function joinCourse(Course $course, UserRequest $request): JsonResponse
+    public function joinCourse(Course $course): JsonResponse
     {
         $user_courses = $this->userService->
-        newJoinCourse($course, UserDTO::fromValidatedRequest($request));
+        newJoinCourse($course);
 
         return response()->json([
             'message' => 'Course joined successfully',
