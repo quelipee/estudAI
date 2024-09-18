@@ -55,19 +55,18 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
             'courses' => $user->courses,
         ]);
     })->name('yourCourses');
+
+    Route::get('topics/{id}',function($id){
+        $topics = Topic::query()->where('course_id',$id)->get();
+        return $topics;
+    })->name('courses_topics');
+
+    Route::get('findTopic/{id}',function($id){
+        $topic = Topic::query()->where('id',$id)->first();
+        return $topic;
+    });
+
+    Route::get('findCourse/{id}',function($id){
+        return Course::query()->where('id',$id)->first();
+    })->name('find_course');
 });
-
-//TODO ADJUSTS LATER
-Route::get('topics/{id}',function($id){
-    $topics = Topic::query()->where('course_id',$id)->get();
-    return $topics;
-})->name('courses_topics');
-
-Route::get('findTopic/{id}',function($id){
-   $topic = Topic::query()->where('id',$id)->first();
-   return $topic;
-});
-
-Route::get('findCourse/{id}',function($id){
-    return Course::query()->where('id',$id)->first();
-})->name('find_course');

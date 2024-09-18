@@ -24,7 +24,7 @@ class UserController extends Controller
     /**
      * @throws Exception
      */
-    public function signUp(UserSignUpRequest $request): JsonResponse
+    public function signUp(UserSignUpRequest $request)
     {
         $user = $this->userService-> serviceSignUp(SignUpDTO::fromValidatedRequest($request));
 

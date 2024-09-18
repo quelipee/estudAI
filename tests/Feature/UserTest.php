@@ -67,7 +67,7 @@ class UserTest extends TestCase
             'category' => 'programação'
         ]);
 
-        $response = $this->actingAs($user)->post('api/app/join-course/'.$course->id);
+        $response = $this->actingAs($user)->get('api/app/join-course/'.$course->id);
         $response->assertStatus(Response::HTTP_CREATED);
     }
 

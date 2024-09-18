@@ -28,7 +28,7 @@ class UserService implements AuthServiceContract
             throw UserException::emailAlreadyExists();
         };
 
-        return New User([
+        return User::Create([
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => $dto->password,
