@@ -13,6 +13,7 @@ use App\Events\TopicEvent;
 use App\Events\YourCourseEvent;
 use App\Models\Course;
 use App\Models\Topic;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -49,7 +50,7 @@ class CourseService implements CourseTopicsContracts
             }
         }
 
-        Event::dispatch(new CourseEvent(Course::all()->toArray()));
+        $this->getDispatch();
         return $course;
     }
 
@@ -82,9 +83,8 @@ class CourseService implements CourseTopicsContracts
         if (!$course){
             throw CourseException::courseNotDeleted($course->title);
         }
-        Event::dispatch(new CourseEvent(Course::all()->toArray()));
-        $user = Auth::user();
-        Event::dispatch(new YourCourseEvent($user->courses->toArray()));
+        $this->getDispatch();
+        $this->getDispatchYourCourse();
         return true;
     }
 
@@ -114,11 +114,8 @@ class CourseService implements CourseTopicsContracts
         }
 
         Log::info('Course update with success!!');
-        Event::dispatch(new CourseEvent(
-            Course::all()->toArray()
-        ));
-        $user = Auth::user();
-        Event::dispatch(new YourCourseEvent($user->courses->toArray()));
+        $this->getDispatch();
+        $this->getDispatchYourCourse();
         return Course::find($id);
     }
 
@@ -192,5 +189,27 @@ class CourseService implements CourseTopicsContracts
             Topic::query()->where('course_id',$dto->course_id)
                 ->get()->toArray()));
         return $topic;
+    }
+
+    /**
+     * @return void
+     */
+    public function getDispatch(): void
+    {
+        $userId = User::find(Auth::id())->first();
+        Event::dispatch(new CourseEvent(
+            Course::query()->WithCount('users')->whereDoesntHave('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId->id);
+            })->get()->toArray()
+        ));
+    }
+
+    /**
+     * @return void
+     */
+    public function getDispatchYourCourse(): void
+    {
+        $user = User::find(Auth::id())->first();
+        Event::dispatch(new YourCourseEvent($user->courses->toArray()));
     }
 }

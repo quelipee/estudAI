@@ -133,9 +133,15 @@ class ChatService implements ChatContracts
         Event::dispatch(new MessageEvent($res->toArray()));
         return $res;
     }
-    public function fetch_message_IA($course, int $messageId): GenerateContentResponse
+
+    /**
+     * @throws ClientExceptionInterface
+     */
+    public function message_of_the_day(): string
     {
-        // TODO: Implement fetch_message_IA() method.
+        $message = 'gera uma mensagem curta de motivação para estudantes';
+        $response = $this->client->geminiPro()->generateContent(new TextPart($message));
+        return $response->text();
     }
     public function retrieveConversationLog(Course $course, Topic $topic): array
     {

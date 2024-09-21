@@ -30,4 +30,11 @@ class ChatTest extends TestCase
         $response = $this->actingAs($user)->get('api/app/chat/' . $course->id . '/topic/' . $topic->id . '/message');
         $response->assertStatus(200);
     }
+
+    public function test1234()
+    {
+        $user = User::factory()->create();
+        $response = $this->actingAs($user)->get('api/app/firstMessage/' . 2);
+        $response->assertStatus(200);
+    }
 }

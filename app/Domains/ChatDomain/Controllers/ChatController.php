@@ -23,4 +23,12 @@ class ChatController extends Controller
             'message' => $response,
         ],200);
     }
+
+    public function message_day(): JsonResponse
+    {
+        $response = $this->chatContracts->message_of_the_day();
+        return response()->json([
+            'message_day' => $response,
+        ],200);
+    }
 }

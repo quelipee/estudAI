@@ -18,17 +18,21 @@ Route::get('/user', function (Request $request) {
 Route::middleware(['guest:sanctum'])->group(function () {
     Route::post('register', [UserController::class,'signUp'])->name('signUp');
     Route::post('login', [UserController::class,'signIn'])->name('signIn');
-    Route::get('courses',function(){
-        //TODO ADJUSTS AFTER
-        $courses = Course::all();
-        return response()->json(
-            ['courses' => $courses]
-        );
-    });
+    Route::get('message_day', [ChatController::class,'message_day'])->name('message_day');
 });
 
 
 Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('courses',function(){
+        $courses = Course::query()->WithCount('users')->whereDoesntHave('users',function ($query) {
+            $query->where('user_id',Auth::id());
+        })->get();
+        return response()->json(
+            ['courses' => $courses]
+        );
+    });
+
+
     Route::post('logout', [UserController::class,'signOut'])->name('signOut');
     //TODO NOT APPLY
     Route::get('join-course/{course}', [UserController::class,'joinCourse'])->name('join-course')
@@ -47,6 +51,14 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
             $query->where('role', Role::Model->name)
                 ->where('topic_id',$id)->where('user_id',$user->id);
         }]);
+    });
+
+    Route::get('firstMessage/{id}',function ($id){
+        $topic = Topic::query()->where('id', $id)->first();
+        $topic->load(['messageHistory' => function ($query) {
+            $query->where('role', Role::Model->name)->first();
+        }]);
+        return $topic->toArray();
     });
 
     Route::get('your_courses',function(){
