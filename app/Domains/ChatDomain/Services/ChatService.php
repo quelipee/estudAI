@@ -58,7 +58,7 @@ class ChatService implements ChatContracts
             ->where('id',$topic)
             ->first();
 
-        $text = 'me ensine sobre este topico: ' . $topic->title . ' essa é a sua descrição: ' . $topic->description;
+        $text = 'me ensine sobre este topico: ' . $topic->title . ' essa é a sua descrição: ' . $topic->topic;
 
         $user = new MessageHistory([
             'message' => $text,

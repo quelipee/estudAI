@@ -42,11 +42,13 @@ class CourseService implements CourseTopicsContracts
 
         foreach ($dto->topics as $topic) {
             if ($topic['title'] != null or  $topic['topic'] != null) {
-                Topic::create([
+                $new_topic = Topic::create([
                     'title' => $topic['title'],
                     'topic' => $topic['topic'],
                     'course_id' => $course->id
                 ]);
+
+                $this->chatContracts->receive_topic($course, $new_topic->id);
             }
         }
 
@@ -79,7 +81,7 @@ class CourseService implements CourseTopicsContracts
         }
 
         $course->delete();
-        Log::info('Course delete with success!!');
+        Log::info('Course delete with success!!', (array)$course);
         if (!$course){
             throw CourseException::courseNotDeleted($course->title);
         }
@@ -93,7 +95,7 @@ class CourseService implements CourseTopicsContracts
      */
     public function updateCourse(newCourseDTO $dto, int $id): Course
     {
-        if (Course::query()->where(['id' => $id])->doesntExist()){
+        if (Course::query()->where('id',$id)->doesntExist()){
             Log::error('Not found!!');
             throw CourseException::courseNotfound($dto->title);
         }
@@ -111,11 +113,12 @@ class CourseService implements CourseTopicsContracts
                 'topic' => $dto->topics['topic'],
                 'updated_at' => now(),
             ]);
+
         }
 
         Log::info('Course update with success!!');
-        $this->getDispatch();
         $this->getDispatchYourCourse();
+        $this->getDispatch();
         return Course::find($id);
     }
 
@@ -150,7 +153,7 @@ class CourseService implements CourseTopicsContracts
 
     public function existCourse($title) : bool
     {
-        return Course::where('title',$title)->exists();
+        return Course::query()->where('title',$title)->exists();
     }
 
     /**
@@ -196,7 +199,7 @@ class CourseService implements CourseTopicsContracts
      */
     public function getDispatch(): void
     {
-        $userId = User::find(Auth::id())->first();
+        $userId = User::query()->where('id',Auth::id())->first();
         Event::dispatch(new CourseEvent(
             Course::query()->WithCount('users')->whereDoesntHave('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId->id);
@@ -209,7 +212,7 @@ class CourseService implements CourseTopicsContracts
      */
     public function getDispatchYourCourse(): void
     {
-        $user = User::find(Auth::id())->first();
+        $user = User::query()->where('id',Auth::id())->first();
         Event::dispatch(new YourCourseEvent($user->courses->toArray()));
     }
 }
