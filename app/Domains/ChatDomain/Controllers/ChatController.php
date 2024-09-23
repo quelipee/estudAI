@@ -31,4 +31,20 @@ class ChatController extends Controller
             'message_day' => $response,
         ],200);
     }
+
+    public function introductionResponse(int $id): JsonResponse
+    {
+        $firstResponse = $this->chatContracts->firstInteraction($id);
+        return response()->json([
+            'first_response' => $firstResponse,
+        ],200);
+    }
+
+    public function requestForMessageChatThisUser(int $id): JsonResponse
+    {
+        $responseChat = $this->chatContracts->takeResponseMessage($id);
+        return response()->json([
+            'responseChat' => $responseChat,
+        ],200);
+    }
 }

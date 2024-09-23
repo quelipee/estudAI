@@ -1,15 +1,12 @@
 <?php
 
 use App\Domains\ChatDomain\Controllers\ChatController;
+use App\Domains\CourseDomain\CourseController\APICourseController;
 use App\Domains\UserDomain\UserController\UserController;
 use App\Http\Middleware\EnsureHasCourseMiddleware;
 use App\Http\Middleware\PreventDuplicateEnrollment;
-use GeminiAPI\Enums\Role;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Models\Course;
-use App\Models\Topic;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -23,15 +20,7 @@ Route::middleware(['guest:sanctum'])->group(function () {
 
 
 Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
-    Route::get('courses',function(){
-        $courses = Course::query()->WithCount('users')->whereDoesntHave('users',function ($query) {
-            $query->where('user_id',Auth::id());
-        })->get();
-        return response()->json(
-            ['courses' => $courses]
-        );
-    });
-
+    Route::get('courses', [APICourseController::class, 'index'])->name('courses');
 
     Route::post('logout', [UserController::class,'signOut'])->name('signOut');
     //TODO NOT APPLY
@@ -45,40 +34,15 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
 
     Route::get('profile',[UserController::class,'loadUserProfile'])->name('loadUserProfile');
 
-    Route::get('messageChat/{id}',function($id){
-        $user = Auth::user();
-        return $user->load(['messageHistory' => function($query) use ($id,$user){
-            $query->where('role', Role::Model->name)
-                ->where('topic_id',$id)->where('user_id',$user->id);
-        }]);
-    });
+    Route::get('messageChat/{id}',[ChatController::class, 'requestForMessageChatThisUser'])->name('messageChat');
 
-    Route::get('firstMessage/{id}',function ($id){
-        $topic = Topic::query()->where('id', $id)->first();
-        $topic->load(['messageHistory' => function ($query) {
-            $query->where('role', Role::Model->name)->first();
-        }]);
-        return $topic->toArray();
-    });
+    Route::get('introduction/{id}',[ChatController::class, 'introductionResponse'])->name('introduction');
 
-    Route::get('your_courses',function(){
-        $user = Auth::user();
-        return response()->json([
-            'courses' => $user->courses,
-        ]);
-    })->name('yourCourses');
+    Route::get('your_courses',[APICourseController::class, 'getUserCourseByAuthentication'])->name('yourCourses');
 
-    Route::get('topics/{id}',function($id){
-        $topics = Topic::query()->where('course_id',$id)->get();
-        return $topics;
-    })->name('courses_topics');
+    Route::get('topics/{id}',[APICourseController::class, 'pickUpThreads'])->name('take_all_topics_for_user');
 
-    Route::get('findTopic/{id}',function($id){
-        $topic = Topic::query()->where('id',$id)->first();
-        return $topic;
-    });
+    Route::get('findTopic/{id}',[APICourseController::class, 'takeTopicWithCourse'])->name('find_topic');
 
-    Route::get('findCourse/{id}',function($id){
-        return Course::query()->where('id',$id)->first();
-    })->name('find_course');
+    Route::get('findCourse/{id}',[APICourseController::class, 'takeCourse'])->name('find_course');
 });

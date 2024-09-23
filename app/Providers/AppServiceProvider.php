@@ -7,7 +7,9 @@ use App\Domains\AdmDomains\ManagerException;
 use App\Domains\AdmDomains\Services\AuthManagerService;
 use App\Domains\ChatDomain\ChatContracts;
 use App\Domains\ChatDomain\Services\ChatService;
+use App\Domains\CourseDomain\CourseService\APICourseService;
 use App\Domains\CourseDomain\CourseService\CourseService;
+use App\Domains\CourseDomain\Interfaces\APICourseContracts;
 use App\Domains\CourseDomain\Interfaces\CourseTopicsContracts;
 use App\Domains\UserDomain\AuthServiceContract;
 use App\Domains\UserDomain\UserService\UserService;
@@ -21,12 +23,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(Client::class,function ($app){
+        $this->app->singleton(Client::class,function (){
             return new Client(env('GEMINI_API_KEY'));
         });
 
-        $this->app->singleton(AuthServiceContract::class,function ($app){
+        $this->app->singleton(AuthServiceContract::class,function (){
             return new UserService();
+        });
+
+        $this->app->bind(APICourseContracts::class, function (){
+            return new APICourseService();
         });
 
         $this->app->bind(CourseTopicsContracts::class,function ($app){

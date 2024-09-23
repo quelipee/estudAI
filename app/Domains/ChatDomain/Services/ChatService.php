@@ -8,6 +8,7 @@ use App\Events\MessageUpdatedEvent;
 use App\Models\Course;
 use App\Models\MessageHistory;
 use App\Models\Topic;
+use App\Models\User;
 use GeminiAPI\ChatSession;
 use GeminiAPI\Client;
 use GeminiAPI\Enums\Role;
@@ -27,6 +28,24 @@ class ChatService implements ChatContracts
     ){
         $this->client = new Client($this->apiKey);
         $this->chat = $this->client->geminiPro()->startChat();
+    }
+
+    public function takeResponseMessage(int $id) : User
+    {
+        $user = User::find(Auth::id());
+        return $user->load(['messageHistory' => function($query) use ($id,$user){
+            $query->where('role', Role::Model->name)
+                ->where('topic_id',$id)->where('user_id',$user->id);
+        }]);
+    }
+
+    public function firstInteraction(int $id): array
+    {
+        $topic = Topic::query()->where('id', $id)->first();
+        $topic->load(['messageHistory' => function ($query) {
+            $query->where('role', Role::Model->name)->first();
+        }]);
+        return $topic->toArray();
     }
 
     /**
