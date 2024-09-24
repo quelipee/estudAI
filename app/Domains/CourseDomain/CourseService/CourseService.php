@@ -51,8 +51,8 @@ class CourseService implements CourseTopicsContracts
                 $this->chatContracts->receive_topic($course, $new_topic->id);
             }
         }
-
         $this->getDispatch();
+        $this->getDispatchYourCourse();
         return $course;
     }
 
@@ -186,7 +186,7 @@ class CourseService implements CourseTopicsContracts
         $course = Course::query()->where('id',$dto->course_id)->first();
         $this->chatContracts->updated_topic_message(
             $course,$topic->id,$dto->roleModelId,
-            $dto->roleUserId, $dto->title, $dto->topic);
+            $dto->roleUserId, $dto->title, $dto->topic);    
 
         Event::dispatch(new TopicEvent(
             Topic::query()->where('course_id',$dto->course_id)
