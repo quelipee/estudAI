@@ -21,6 +21,7 @@ use Tests\TestCase;
 class CourseTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * A basic feature test example.
      */
@@ -32,25 +33,26 @@ class CourseTest extends TestCase
             'title' => 'curso de python basico',
             'description' => 'neste curso de python basico você irá aprender do zero tudo sobre a ferramenta de desenvolvimento.',
             'category' => Category::SoftwareDevelopment->value,
-                'topics' => [
-                    [
-                        'title' => 'Variáveis e Tipos de Dados',
-                        'topic' => 'Aprenda sobre como armazenar e manipular dados em variáveis, incluindo diferentes tipos de dados como números, strings e listas.'
-                    ],
-                    [
-                        'title' => 'Estrutura de Controle',
-                        'topic' => 'Entenda como controlar o fluxo do programa usando instruções como if,else e loops for e while'
-                    ],
-                    [
-                        'title' => 'Funções',
-                        'topic' => 'Crie e use funções para modularizar seu código e reutilizar blocos de funcionalidade.'
-                    ],
-                ]
+            'topics' => [
+                [
+                    'title' => 'Variáveis e Tipos de Dados',
+                    'topic' => 'Aprenda sobre como armazenar e manipular dados em variáveis, incluindo diferentes tipos de dados como números, strings e listas.'
+                ],
+                [
+                    'title' => 'Estrutura de Controle',
+                    'topic' => 'Entenda como controlar o fluxo do programa usando instruções como if,else e loops for e while'
+                ],
+                [
+                    'title' => 'Funções',
+                    'topic' => 'Crie e use funções para modularizar seu código e reutilizar blocos de funcionalidade.'
+                ],
+            ]
         ];
 
         $response = $this->actingAs($user)->post('new-course', $payload);
         $response->assertStatus(Response::HTTP_FOUND);
     }
+
     public function test_view_courses()
     {
         $user = User::factory()->create(['is_admin' => true]);
@@ -58,6 +60,7 @@ class CourseTest extends TestCase
         $response = $this->actingAs($user)->get('/');
         $response->assertStatus(Response::HTTP_OK);
     }
+
     public function test_delete_course()
     {
         $user = User::factory()->create(['is_admin' => true]);
@@ -149,46 +152,4 @@ class CourseTest extends TestCase
             'topic' => $payload['topic'],
         ]);
     }
-
-//    #[NoReturn] public function test123()
-//    {
-//        $guzzle = new Client();
-//
-//        $guzzle->request('post','https://univirtus.uninter.com/ava/autenticacao/autenticar/false/Post',[
-//            'headers' => [
-//                'Content-Type' => 'application/x-www-form-urlencoded',
-//                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-//            ],
-//            'form_params' => [
-//                'login' => 13232,
-//                'senha' => 493614,
-//            ],
-//        ]);
-//
-//        $response = $guzzle->post(
-//            'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
-//            [
-//                'headers' => [
-//                    'Content-Type' => 'application/json',
-//                ],
-//                'json' => [
-//                    'contents' => [
-//                        [
-//                            'parts' => [
-//                                [
-//                                    'text' => 'me fale um pouco sobre o brasil',
-//                                ],
-//                            ],
-//                        ],
-//                    ],
-//                ],
-//                'query' => [
-//                    'key' => 'AIzaSyCBZyn8RbkDC3DRcvReylwkysbFMQJ7GdA',
-//                ],
-//            ]
-//        );
-//
-//        $responseBody = json_decode($response->getBody(), true);
-//        dd($responseBody['candidates'][0]['content']['parts'][0]['text']);
-//    }
 }
